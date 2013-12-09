@@ -31,6 +31,10 @@ footer {
   z-index: 0;
 }      
 
+#hud_canvas, #hud_display {
+  padding: 0px 0px 0px 0px;
+}
+
 .wrapper { 
   position: relative;
   z-index:100;

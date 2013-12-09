@@ -180,6 +180,10 @@ def master_callback(m, master):
     	m.groundspeed = -1
         send_mav_msg(m)
 
+    # send pitch/roll/yaw information for HUD
+    elif mtype == "ATTITUDE":
+    	send_mav_msg(m)
+
     # raw GPS data
     elif mtype == "GPS_RAW":
     	send_mav_msg(m)
@@ -290,9 +294,6 @@ if __name__ == "__main__":
     # run main loop
     main_loop()
 
-    #server_state.application = application
-    #server_state.application.listen(server_state.port)
-    #tornado.ioloop.IOLoop.instance().start()
 
 
 

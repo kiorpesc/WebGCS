@@ -24,6 +24,7 @@ function UAV(ws, address, port, id) {
   this.alt = 0;
   this.airspeed = 0;
   this.autopilot = 0;
+  this.voltage = 0;
 
 } 
 
@@ -136,16 +137,16 @@ function addUAVTabById(id){
 }
 
 function removeUAVById(id){
-  var container= document.getElementById('current_uavs');
+  var container= document.getElementById('current_uavs_ul');
   var child = document.getElementById('uav' + id.toString())
   container.removeChild(child);
   window.uavs[id].socket.close();
   window.uavs.splice(id, 1);
-  updateUAVIds();
   //update current uav number and highlight
   if(window.uavs.length === 0){
     current_uav = -1;
   } else {
+    updateUAVIds();
     current_uav = 0;
     document.getElementById("uav0").setAttribute("class", "active");
   }
@@ -188,6 +189,8 @@ function HandleMavlink(msg, id){
       document.getElementById('heading').innerHTML = msg_json.heading.toFixed(1);
       break;
     case 'ATTITUDE':
+       uavs[current_uav].pitch = msg_json.pitch;
+       uavs[current_uav].roll = msg_json.roll;
       //document.getElementById('pitch').innerHTML = msg_json.pitch.toFixed(6);
       //document.getElementById('roll').innerHTML = msg_json.roll.toFixed(6);
       break;
@@ -197,6 +200,10 @@ function HandleMavlink(msg, id){
       window.uavs[window.current_uav].lon = msg_json.lon/10000000;
       document.getElementById('lon').innerHTML = window.uavs[window.current_uav].lon.toFixed(7);
       //document.getElementById('time_sec').innerHTML = (msg_json.time_usec/1000000).toFixed(4);
+      break;
+    case 'SYS_STATUS':
+      uavs[current_uav].voltage = msg_json.voltage_battery/1000;
+      document.getElementById('airspeed').innerHTML = uavs[current_uav].voltage.toFixed(3) + "V";
       break;
     default:
       break;    
@@ -211,8 +218,8 @@ function HandleMavlink(msg, id){
       uav.autopilot = msg_json.autopilot;
       pulseUAV(uav);
   }
-  debug_counter += 1;
-  document.getElementById('airspeed').innerHTML = current_uav;
+  //debug_counter += 1;
+  
 }
 
 function pulseUAV(uav){
