@@ -32,12 +32,11 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         print(server_state.ws_count)
 
     def send_mavlink(self, msg):
-    	self.write_message(msg.to_dict())
-        #try:
-        #    self.write_message(msg.to_dict())
-        #except:
+        try:
+            self.write_message(msg.to_dict())
+        except:
             # handle hard-to-convert messages
-        #    pass
+            pass
 
 class ServerState():
     def __init__(self, _port):
@@ -130,18 +129,7 @@ def master_callback(m, master):
         # update link_delayed attribute
         handle_msec_timestamp(m, master)
 
-
     mtype = m.get_type()
-
-    '''
-    # and log them
-    if mtype != 'BAD_DATA' and mpstate.logqueue:
-        # put link number in bottom 2 bits, so we can analyse packet
-        # delay in saved logs
-        usec = get_usec()
-        usec = (usec & ~3) | master.linknum
-        mpstate.logqueue.put(str(struct.pack('>Q', usec) + m.get_msgbuf()))
-    '''
 
     if mtype in [ 'HEARTBEAT', 'GPS_RAW_INT', 'GPS_RAW', 'GLOBAL_POSITION_INT', 'SYS_STATUS' ]:
         server_state.last_message = time.time()
@@ -154,50 +142,22 @@ def master_callback(m, master):
             return
 
     if mtype == 'HEARTBEAT' and m.get_srcSystem() != 255:
-    	'''
-        if (mpstate.status.target_system != m.get_srcSystem() or
-            mpstate.status.target_component != m.get_srcComponent()):
-            mpstate.status.target_system = m.get_srcSystem()
-            mpstate.status.target_component = m.get_srcComponent()
-        '''
         if not server_state.got_params:
-            # say("online system %u component %u" % (m.get_srcSystem(), m.get_srcComponent(),'message')
-            # if len(mpstate.mav_param_set) == 0 or len(mpstate.mav_param_set) != mpstate.mav_param_count:
             master.param_fetch_all()
             server_state.got_params = True
-        '''
-        if mpstate.status.heartbeat_error:
-            mpstate.status.heartbeat_error = False
-            say("heartbeat OK")
-        '''
+
         if server_state.linkerror:
             server_state.linkerror = False
-            # say("link %u OK" % (master.linknum+1))
 
         server_state.last_heartbeat = time.time()
 
-        # send heartbeat over all websockets
         send_mav_msg(m)
-        #print("Sent heartbeat.")
 
-        '''
-        armed = mpstate.master().motors_armed()
-        if armed != mpstate.status.armed:
-            mpstate.status.armed = armed
-            if armed:
-                say("ARMED")
-            else:
-                say("DISARMED")
-        '''
-
+    # TODO: implement status handling
     elif mtype == 'STATUSTEXT':
     	pass
-    	'''
-        if m.text != mpstate.status.last_apm_msg or time.time() > mpstate.status.last_apm_msg_time+2:
-            mpstate.console.writeln("APM: %s" % m.text, bg='red')
-            mpstate.status.last_apm_msg = m.text
-            mpstate.status.last_apm_msg_time = time.time()
-        '''
+
+    # receiving parameters from vehicle
     elif mtype == 'PARAM_VALUE':
         param_id = "%.16s" % m.param_id
         if m.param_index != -1 and m.param_index not in server_state.mav_param_set:
@@ -209,67 +169,41 @@ def master_callback(m, master):
             server_state.mav_param_count = m.param_count
         server_state.mav_param[str(param_id)] = m.param_value
 
+    # universtal status message, gives battery, flight mode, and other important data
+    # TODO: battery handling?
     elif mtype == "SYS_STATUS":
         send_mav_msg(m)
-    	'''
-        battery_update(m)
-        if master.flightmode != mpstate.status.flightmode and time.time() > mpstate.status.last_mode_announce + 2:
-            mpstate.status.flightmode = master.flightmode
-            mpstate.status.last_mode_announce = time.time()
-            mpstate.rl.set_prompt(mpstate.status.flightmode + "> ")
-            say("Mode " + mpstate.status.flightmode)
-        '''
 
+    # messages formatted for easy use with a HUD
     elif mtype == "VFR_HUD":
     	# FIXME: this line is only here to prevent JSON problems
     	m.groundspeed = -1
         send_mav_msg(m)
 
+    # raw GPS data
     elif mtype == "GPS_RAW":
     	send_mav_msg(m)
 
+    # same as above, with different name
     elif mtype == "GPS_RAW_INT":
     	send_mav_msg(m)
 
+    # more GPS data
     elif mtype == "GLOBAL_POSITION_INT":
         send_mav_msg(m)
-        #report_altitude(m.relative_alt*0.001)
 
     # TODO: handle NAV_CONTROLLER_OUTPUT for APM
+    elif mtype == 'NAV_CONTROLLER_OUTPUT':
+        pass
 
     elif mtype in [ "COMMAND_ACK", "MISSION_ACK" ]:
     	# use this for displaying ACK in navbar
     	send_mav_msg(m)
-        #mpstate.console.writeln("Got MAVLink msg: %s" % m)
     else:
-        #mpstate.console.writeln("Got MAVLink msg: %s" % m)
+        # some other message?
         pass
     
-    '''
-    # don't pass along bad data
-    if mtype != "BAD_DATA":
-        # pass messages along to listeners, except for REQUEST_DATA_STREAM, which
-        # would lead a conflict in stream rate setting between mavproxy and the other
-        # GCS
-        if mpstate.settings.mavfwd_rate or mtype != 'REQUEST_DATA_STREAM':
-            for r in mpstate.mav_outputs:
-                r.write(m.get_msgbuf())
-
-        # pass to modules
-        for mod in mpstate.modules:
-            if not hasattr(mod, 'mavlink_packet'):
-                continue
-            try:
-                mod.mavlink_packet(m)
-            except Exception, msg:
-                if mpstate.settings.moddebug == 1:
-                    print(msg)
-                elif mpstate.settings.moddebug > 1:
-                    import traceback
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    traceback.print_exception(exc_type, exc_value, exc_traceback,
-                                              limit=2, file=sys.stdout)
-    '''
+    # TODO: if modules need messages, implement here
 
 def create_mavlink_connection():
 	    # code from MAVProxy
