@@ -137,7 +137,8 @@ function addUAVTabById(id){
 
 function removeUAVById(id){
   var container= document.getElementById('current_uavs');
-  container.removeChild('uav' + id.toString());
+  var child = document.getElementById('uav' + id.toString())
+  container.removeChild(child);
   window.uavs[id].socket.close();
   window.uavs.splice(id, 1);
   updateUAVIds();
@@ -210,6 +211,8 @@ function HandleMavlink(msg, id){
       uav.autopilot = msg_json.autopilot;
       pulseUAV(uav);
   }
+  debug_counter += 1;
+  document.getElementById('airspeed').innerHTML = current_uav;
 }
 
 function pulseUAV(uav){
