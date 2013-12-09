@@ -18,4 +18,16 @@ TODO:
 		- eliminate unnecessary CPU usage (will not need text console if commands can be handled from the web).
 	Enable sending commands to UAV from web browser (via craft-specific module)
 
-	
+Installation:
+=============
+
+The backend requires Tornado and PyMAVLink to run.
+PyMAVLink can be installed via pip (pip install pymavlink).
+
+Once these two libraries are installed, simply run the backend server
+on whichever computer is connected to your vehicle (can be serial,
+UDP, or TCP).
+
+        python webgcs_server.py -p <port> -m <mavlink device (ex: '/dev/ttyACM0')> -b <baud rate>
+
+Once the server is running, open the index.html file in the web_ui folder on any machine and click "Add UAV."  Enter the address and port of the server (ex: localhost:8888) and Submit, and you should start seeing information from your vehicle on the website in realtime.
