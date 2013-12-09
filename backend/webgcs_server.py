@@ -23,6 +23,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         print(server_state.ws_count)
 
     def on_message(self, message):
+    	# TODO: handle messages from browser interface.
         self.write_message(u"Server echoed: " + message)
 
     def on_close(self):
@@ -39,6 +40,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             pass
 
 class ServerState():
+    '''Holds important information about the server and the UAV.'''
     def __init__(self, _port):
         self.port = _port
         self.from_client = Queue.Queue(maxsize=0)
@@ -84,12 +86,14 @@ def start_server(_server_state):
     server_state.server_thread.daemon = True
     server_state.server_thread.start()
 
+# send mavlink message to all websockets
 def send_mav_msg(msg):
     if server_state.ws_count > 0:
         for ws in server_state.websockets:
             ws.send_mavlink(msg)
 
-
+# this gives us the time that uav sent the message, and sets a delayed flag
+# if the time is less than the highest time received (prevents duplicate data)
 def handle_msec_timestamp(m, master):
     '''special handling for MAVLink packets with a time_boot_ms field'''
 
@@ -113,17 +117,18 @@ def handle_msec_timestamp(m, master):
     else:
         master.link_delayed = False
 
+# this currently does nothing -> not sure what it should do yet
 def master_send_callback(m, master):
     '''called on sending a message'''
     mtype = m.get_type()
 
-
+# method that is called when a message from the UAV is received on the serial or UDP link
+# this handles modifying mavlink-related server_state variables,
+# as well as sending the desired messages out over any and all websockets (to all linked
+# instances of the web interface)
 def master_callback(m, master):
     '''process mavlink message m on master, sending any messages to recipients'''
     global server_state
-    #if getattr(m, '_timestamp', None) is None:
-    #    master.post_message(m)
-    # mpstate.status.counters['MasterIn'][master.linknum] += 1
 
     if getattr(m, 'time_boot_ms', None) is not None:
         # update link_delayed attribute
@@ -209,6 +214,7 @@ def master_callback(m, master):
     
     # TODO: if modules need messages, implement here
 
+# use mavutil to create a mavlink connection (automatically handles serial, TCP, and UDP types)
 def create_mavlink_connection():
 	    # code from MAVProxy
         m = mavutil.mavlink_connection(server_state.master, autoreconnect=True, baud=server_state.baud)
@@ -218,6 +224,7 @@ def create_mavlink_connection():
         m.link_delayed = False
 
         return m
+
 
 def process_master(m):
     '''process packets from the MAVLink master'''
@@ -283,12 +290,15 @@ if __name__ == "__main__":
 
     (opts, args) = parser.parse_args()
 
+    # create server_state to hold important information
     server_state = ServerState(opts.port)
     server_state.master = opts.master
     server_state.baud = opts.baud
 
+    # create mavlink connection with the master
     server_state.mavconn = create_mavlink_connection()
 
+    # start server in new thread
     start_server(server_state)
 
     # run main loop

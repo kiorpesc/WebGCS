@@ -34,6 +34,7 @@ function UAV(ws, address, port, id) {
 function newUAVLink(ip_port_string){
   var ip_port = ip_port_string.split(":");
   var ws = new WebSocket("ws://" + ip_port_string + "/websocket");
+
   ws.onopen = function() {
     var id = window.uavs.length;
     if (ip_port.length > 1){
@@ -46,6 +47,7 @@ function newUAVLink(ip_port_string){
     addUAVTabById(id);
     alert('Connected. uav id=' + id.toString());
   }
+
   ws.onmessage = function(evt){
     var msg = evt.data;
     var ws_id = getWSId(ws);
@@ -70,7 +72,8 @@ function newUAVLink(ip_port_string){
 } // end newUAVLink
 
 
-/** Attempt to reestablish communications with a UAV. */
+/* Attempt to reestablish communications with a UAV. */
+// FIXME: currently causes issues
 function reconnectUAV(id) {
   uavs[id].ws.close();
   var ws = new WebSocket("ws://" + window.uavs[id].address + ":" + window.uavs[id].port + "/websocket");
@@ -134,8 +137,12 @@ function addUAVTabById(id){
     }
   }
 
+  setTimeout(function(){ centerMap(); }, 1000);
+
 }
 
+// FIXME: currently does not check to see if there are actually any UAVs
+// before attempting a delete
 function removeUAVById(id){
   var container= document.getElementById('current_uavs_ul');
   var child = document.getElementById('uav' + id.toString())
@@ -152,6 +159,8 @@ function removeUAVById(id){
   }
 }
 
+// when a UAV is removed that is not the last in the list,
+// the id numbers need to be updated to reflect the new array positions.
 function updateUAVIds(){
   if (window.uavs[window.uavs.length-1].id >= window.uavs.length){
     for(var i = 0; i < window.uavs.length; i++){
@@ -202,7 +211,7 @@ function HandleMavlink(msg, id){
       //document.getElementById('time_sec').innerHTML = (msg_json.time_usec/1000000).toFixed(4);
       break;
     case 'SYS_STATUS':
-      uavs[current_uav].voltage = msg_json.voltage_battery/1000;
+      uavs[current_uav].voltage = msg_json.voltage_battery/1000;  //voltage comes in as milliVolts
       document.getElementById('airspeed').innerHTML = uavs[current_uav].voltage.toFixed(3) + "V";
       break;
     default:
