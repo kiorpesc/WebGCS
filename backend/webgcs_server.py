@@ -11,6 +11,35 @@ import select
 
 from pymavlink import mavutil, mavwp, mavparm
 
+# Custom mode definitions from PX4 code base
+PX4_CUSTOM_MAIN_MODE_MANUAL   = 1
+PX4_CUSTOM_MAIN_MODE_SEATBELT = 2
+PX4_CUSTOM_MAIN_MODE_EASY     = 3
+PX4_CUSTOM_MAIN_MODE_AUTO     = 4
+
+PX4_CUSTOM_SUB_MODE_AUTO_READY   = 1
+PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF = 2
+PX4_CUSTOM_SUB_MODE_AUTO_LOITER  = 3
+PX4_CUSTOM_SUB_MODE_AUTO_MISSION = 4
+PX4_CUSTOM_SUB_MODE_AUTO_RTL     = 5
+PX4_CUSTOM_SUB_MODE_AUTO_LAND    = 6
+
+# mavlink base_mode flags
+MAV_MODE_FLAG_DECODE_POSITION_SAFETY      = 0b10000000
+MAV_MODE_FLAG_DECODE_POSITION_MANUAL      = 0b01000000
+MAV_MODE_FLAG_DECODE_POSITION_HIL         = 0b00100000
+MAV_MODE_FLAG_DECODE_POSITION_STABILIZE   = 0b00010000
+MAV_MODE_FLAG_DECODE_POSITION_GUIDED      = 0b00001000
+MAV_MODE_FLAG_DECODE_POSITION_AUTO        = 0b00000100
+MAV_MODE_FLAG_DECODE_POSITION_TEST        = 0b00000010
+MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE = 0b00000001
+
+# masks to prevent accidental arm/disarm of motors
+DISARM_MASK                               = 0b01111111
+ARMED_MASK                                = 0b10000000
+
+uav_module = None
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("blank.html")
@@ -20,11 +49,19 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         global server_State
         server_state.ws_count += 1
         server_state.websockets.append(self)
+        #try:
+        send_json_msg(uav_module.get_modes())
+        server_state.sent_commands = True
+        print('Sent command message.')
+        print(uav_module.get_modes())
+        #except:
+        #	print('Could not send command.')
         print(server_state.ws_count)
 
     def on_message(self, message):
     	# TODO: handle messages from browser interface.
-        self.write_message(u"Server echoed: " + message)
+    	uav_module.convert_command(message)
+        # self.write_message(u"Server echoed: " + message)
 
     def on_close(self):
         global server_state
@@ -33,11 +70,12 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         print(server_state.ws_count)
 
     def send_mavlink(self, msg):
-        try:
-            self.write_message(msg.to_dict())
-        except:
-            # handle hard-to-convert messages
-            pass
+        # try:
+        self.write_message(msg.to_dict())
+        #except:
+        #    print('Could not send message.')
+        #    print(msg)
+        #    pass
 
 class ServerState():
     '''Holds important information about the server and the UAV.'''
@@ -59,6 +97,11 @@ class ServerState():
         self.mav_param_set = set()
         self.mav_param_count = 0
         self.linkerror = False
+        self.autopilot = -1
+        self.loaded_commands = False
+        self.sent_commands = False
+        self.target_system = -1
+        self.target_component = -1
 
     def decode_mavlink(self, msg):
         result = dict()
@@ -86,11 +129,31 @@ def start_server(_server_state):
     server_state.server_thread.daemon = True
     server_state.server_thread.start()
 
+def load_autopilot_commands():
+    uav_module = None
+    if server_state.autopilot == 3:
+        try:
+            import backend.modules.webgcs_apm as _uav_module
+        except:
+            print('Could not import APM commands.')
+    if server_state.autopilot == 12:
+        try:
+            import modules.webgcs_px4 as _uav_module
+        except:
+            print('Could not import PX4 commands.')
+    return _uav_module
+
+
 # send mavlink message to all websockets
 def send_mav_msg(msg):
     if server_state.ws_count > 0:
         for ws in server_state.websockets:
             ws.send_mavlink(msg)
+
+def send_json_msg(msg):
+    if server_state.ws_count > 0:
+        for ws in server_state.websockets:
+            ws.write_message(msg)
 
 # this gives us the time that uav sent the message, and sets a delayed flag
 # if the time is less than the highest time received (prevents duplicate data)
@@ -129,6 +192,7 @@ def master_send_callback(m, master):
 def master_callback(m, master):
     '''process mavlink message m on master, sending any messages to recipients'''
     global server_state
+    global uav_module
 
     if getattr(m, 'time_boot_ms', None) is not None:
         # update link_delayed attribute
@@ -147,19 +211,29 @@ def master_callback(m, master):
             return
 
     if mtype == 'HEARTBEAT' and m.get_srcSystem() != 255:
+    	if (server_state.target_system != m.get_srcSystem() or
+            server_state.target_component != m.get_srcComponent()):
+            server_state.target_system = m.get_srcSystem()
+            server_state.target_component = m.get_srcComponent()
         if not server_state.got_params:
             master.param_fetch_all()
             server_state.got_params = True
-
         if server_state.linkerror:
             server_state.linkerror = False
-
         server_state.last_heartbeat = time.time()
-
         send_mav_msg(m)
+        if server_state.autopilot == -1:
+        	server_state.autopilot = m.autopilot
+        	if not server_state.loaded_commands:
+        		uav_module = load_autopilot_commands()
+        		uav_module.init(server_state)
+        		server_state.loaded_commands = True
+        else:
+            uav_module.mavlink_packet(m)
 
     # TODO: implement status handling
     elif mtype == 'STATUSTEXT':
+    	send_json_msg(json.dumps(['STATUSTEXT', m.text.decode('utf-8', 'replace')]))
     	pass
 
     # receiving parameters from vehicle

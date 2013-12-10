@@ -25,6 +25,7 @@ function UAV(ws, address, port, id) {
   this.airspeed = 0;
   this.autopilot = 0;
   this.voltage = 0;
+  this.flight_modes = [];
 
 } 
 
@@ -45,7 +46,7 @@ function newUAVLink(ip_port_string){
     }
     window.current_uav = id;
     addUAVTabById(id);
-    alert('Connected. uav id=' + id.toString());
+    // alert('Connected. uav id=' + id.toString());
   }
 
   ws.onmessage = function(evt){
@@ -81,7 +82,7 @@ function reconnectUAV(id) {
     var id = uavs.length;
     window.uavs.socket = ws;
     // window.current_uav = id;
-    alert('Connection established.');
+    // alert('Connection established.');
   }
   ws.onmessage = function(evt){
     var msg = evt.data;
@@ -116,6 +117,16 @@ function getWSId(ws){
     }
   }
     return -1;
+}
+
+function sendCommand(cmd_string){
+  var command = cmd_string
+  if(cmd_string === 'ARM'){
+    if(uavs[current_uav].armed){
+        command = 'DISARM';
+    }
+  }
+  uavs[current_uav].socket.send(command);
 }
 
 function addUAVTabById(id){
@@ -156,6 +167,7 @@ function removeUAVById(id){
     updateUAVIds();
     current_uav = 0;
     document.getElementById("uav0").setAttribute("class", "active");
+    updateModeButtons(current_uav);
   }
 }
 
@@ -165,6 +177,23 @@ function updateUAVIds(){
   if (window.uavs[window.uavs.length-1].id >= window.uavs.length){
     for(var i = 0; i < window.uavs.length; i++){
       window.uavs[i].id = i;
+    }
+  }
+}
+
+function updateModeButtons(id){
+  if(current_uav != -1){
+    var modes_div = document.getElementById('flight_modes');
+    modes_div.innerHTML = '';
+    for(var i = 0; i < uavs[id].flight_modes.length; i++){
+      var mode = uavs[id].flight_modes[i];
+      var command = "sendCommand('" + mode + "');"; 
+      var link = document.createElement("a");
+      link.setAttribute('href', '#');
+      link.setAttribute('class', 'list-group-item');
+      link.setAttribute('onclick', command);
+      link.innerHTML = mode;
+      modes_div.appendChild(link);
     }
   }
 }
@@ -191,6 +220,17 @@ function HandleMavlink(msg, id){
   var msg_json = JSON.parse(msg);
   var uav = window.uavs[id];
   if (id === window.current_uav) {
+    if (!msg_json.hasOwnProperty('mavpackettype')){
+      if(msg_json[0] === 'STATUSTEXT'){
+        document.getElementById('status_text').innerHTML = msg_json[1];
+      } else {    
+        uavs[current_uav].flight_modes = [];
+        for(var i = 0; i < msg_json.length; i++){
+          uavs[current_uav].flight_modes[i] = msg_json[i];
+        }
+        updateModeButtons(current_uav);
+      }
+  }else{
   switch(msg_json.mavpackettype)
   {
     case 'VFR_HUD':
@@ -214,8 +254,14 @@ function HandleMavlink(msg, id){
       uavs[current_uav].voltage = msg_json.voltage_battery/1000;  //voltage comes in as milliVolts
       document.getElementById('airspeed').innerHTML = uavs[current_uav].voltage.toFixed(3) + "V";
       break;
+    case 'STATUSTEXT':
+      document.getElementById('status_text').innerHTML = msg_json.text;
+      throw new Error(msg_json.text);
+      break;
     default:
+      //throw new Error(msg);
       break;    
+  }
   }
   }
 

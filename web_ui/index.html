@@ -48,29 +48,14 @@
               <li><a href="#about">Mission</a></li>
               <li><a href="#contact">HUD</a></li>
             </ul>
+            <div id="status_text">
+            <!-- STATUSTEXT messages will appear here -->
+            </div>
         
             <div class="nav navbar-right" id="current_uavs">
               <ul class="nav navbar-nav" id="current_uavs_ul">
                 <!--
-                <li class="active" id="uav0">
-                  <a href="#">
-                    UAV 1
-                    <span class="badge" id="uav0_badge">A|MISSION</span>
-                  </a>
-                </li>
-                
-                <li id="uav1">
-                  <a href="#about">
-                    UAV 2
-                    <span class="badge" id="uav1_badge">D|MANUAL</span>
-                  </a>
-                </li>
-                <li id="uav2">
-                  <a href="#contact">
-                    UAV 3
-                    <span class="badge" id="uav2_badge">A|LOITER</span>
-                  </a>
-                </li>
+                The tabs for the available UAVs will appear here
                 -->
               </ul>
             </div>
@@ -88,7 +73,7 @@
               <div class="list-group-item" id="hud_display">
                 <canvas id="hud_canvas" height="210" width="280" style="z-index: 10">Sorry, your browser does not support canvas.</canvas>
               </div>
-              <a href="#" class="list-group-item">
+              <a href="#" onclick="sendCommand('ARM');" class="list-group-item">
                 <span class="badge" id="current_armed">ARMED</span>
                 Arm/Disarm
               </a>
@@ -97,10 +82,9 @@
                 Flight Mode
               </a>
               <div class="collapse" id="flight_modes">
-                <a href="#" class="list-group-item">Manual</a>
-                <a href="#" class="list-group-item">Seatbelt</a>
-                <a href="#" class="list-group-item">Easy</a>
-                <a href="#" class="list-group-item">Auto</a>
+                <!--
+                Flight modes will be loaded here by JavaScript when a UAV connects.
+                -->
               </div>
               <a onclick="centerMap();" href="#" class="list-group-item">Center Map</a>
               <a href="#collapseNEW" data-toggle="collapse" data-target="#new_uav" class="list-group-item">Add UAV</a>
@@ -118,15 +102,11 @@
               </div>
             </div>  
           </div>
-        <!-- <div class="jumbotron" id="map_canvas" style="height: 500px">
-            
-        </div> -->
         </div><!--/content-nopad-->
       </div><!-- container -->
         
       <div class="row" id="content-nopad">
         <div class="col-sm-12" id="content-nopad">
-          <!--<div class="row row-offcanvas list-group" id="parameters"> -->
           <div class="col-sm-2" id="parameters">
             <table>
             <tr>
