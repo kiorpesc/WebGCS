@@ -5,6 +5,7 @@ var uavs = new Array();
 var debug_counter = 0;
 var current_uav = -1;
 
+// "class" to hold state of a single UAV
 function UAV(ws, address, port, id) {
   this.socket = ws;
   this.address = address;
@@ -27,7 +28,7 @@ function UAV(ws, address, port, id) {
   this.voltage = 0;
   this.flight_modes = [];
 
-} 
+}
 
 /** Create a new UAV connection with WebSockets,
  *  and add the UAV to the navbar.
@@ -36,6 +37,8 @@ function newUAVLink(ip_port_string){
   var ip_port = ip_port_string.split(":");
   var ws = new WebSocket("ws://" + ip_port_string + "/websocket");
 
+  // on websocket open, link the new websocket to a new UAV
+  // and switch our focus to the new UAV
   ws.onopen = function() {
     var id = window.uavs.length;
     if (ip_port.length > 1){
@@ -49,12 +52,15 @@ function newUAVLink(ip_port_string){
     // alert('Connected. uav id=' + id.toString());
   }
 
+  // process received messages
   ws.onmessage = function(evt){
     var msg = evt.data;
     var ws_id = getWSId(ws);
     HandleMavlink(msg, ws_id);
   }
 
+  // what if there is an error?
+  // TODO: stop using alerts and confirmation windows
   ws.onerror = function() {
     var ws_id = getWSId(ws);
     if(confirm("UAV " + ws_id.toString() + " connection error. Attempt reconnect?")){
@@ -67,6 +73,7 @@ function newUAVLink(ip_port_string){
     }
   }
 
+  // TODO: handle closing the link?
   ws.onclose = function() {
     var ws_id = getWSId(ws);
   }
@@ -74,10 +81,11 @@ function newUAVLink(ip_port_string){
 
 
 /* Attempt to reestablish communications with a UAV. */
-// FIXME: currently causes issues
+// FIXME: currently causes issues - also is essentially the same code as above.
 function reconnectUAV(id) {
   uavs[id].ws.close();
   var ws = new WebSocket("ws://" + window.uavs[id].address + ":" + window.uavs[id].port + "/websocket");
+
   ws.onopen = function() {
     var id = uavs.length;
     window.uavs.socket = ws;
@@ -110,6 +118,7 @@ function reconnectUAV(id) {
   }
 } // end reconnectUAV
 
+// rudimentary linear search through UAVs for the current one
 function getWSId(ws){
   for(var i = 0; i < window.uavs.length; i++){
     if (ws === window.uavs[i].socket){
@@ -119,6 +128,7 @@ function getWSId(ws){
     return -1;
 }
 
+// send a command to the UAV server
 function sendCommand(cmd_string){
   var command = cmd_string
   if(cmd_string === 'ARM'){
@@ -129,6 +139,7 @@ function sendCommand(cmd_string){
   uavs[current_uav].socket.send(command);
 }
 
+// add a new tab to the interface when a new UAV connection is established
 function addUAVTabById(id){
   var container= document.getElementById('current_uavs_ul');
   var child = document.createElement("li");
@@ -139,8 +150,8 @@ function addUAVTabById(id){
   child_html += "NO MODE</span></a>";
   child.innerHTML = child_html;
   //parents[i].insertBefore(child, parents[i].firstChild);
-  container.appendChild(child);  
-  
+  container.appendChild(child);
+
   // make other tabs inactive
   if(window.uavs.length > 1){
     for(var i = 0; i < id; i++){
@@ -181,13 +192,15 @@ function updateUAVIds(){
   }
 }
 
+// gets the available flight modes from the current UAV
+// and updates the options available on the interface
 function updateModeButtons(id){
   if(current_uav != -1){
     var modes_div = document.getElementById('flight_modes');
     modes_div.innerHTML = '';
     for(var i = 0; i < uavs[id].flight_modes.length; i++){
       var mode = uavs[id].flight_modes[i];
-      var command = "sendCommand('" + mode + "');"; 
+      var command = "sendCommand('" + mode + "');";
       var link = document.createElement("a");
       link.setAttribute('href', '#');
       link.setAttribute('class', 'list-group-item');
@@ -198,24 +211,8 @@ function updateModeButtons(id){
   }
 }
 
-/*
-function DispatchText(){
-  //first, get message from input field
-  var userInput = document.getElementById("message").value;
-  //then, clear input field
-  document.getElementById("message").value = "";
-  //now, create a paragraph element
-  x = document.createElement("p");
-  //set the p text to the input 
-  x.innerHTML = "You sent: " + userInput;
-  //stick the input into the chat box
-  document.getElementById("chatbox").appendChild(x);
-  //send user input to server for processing
-  ws.send(userInput);
-}
-*/
 
-
+// process MavLink messages (JSON) from the UAV's server
 function HandleMavlink(msg, id){
   var msg_json = JSON.parse(msg);
   var uav = window.uavs[id];
@@ -223,7 +220,7 @@ function HandleMavlink(msg, id){
     if (!msg_json.hasOwnProperty('mavpackettype')){
       if(msg_json[0] === 'STATUSTEXT'){
         document.getElementById('status_text').innerHTML = msg_json[1];
-      } else {    
+      } else {
         uavs[current_uav].flight_modes = [];
         for(var i = 0; i < msg_json.length; i++){
           uavs[current_uav].flight_modes[i] = msg_json[i];
@@ -260,7 +257,7 @@ function HandleMavlink(msg, id){
       break;
     default:
       //throw new Error(msg);
-      break;    
+      break;
   }
   }
   }
@@ -274,7 +271,7 @@ function HandleMavlink(msg, id){
       pulseUAV(uav);
   }
   //debug_counter += 1;
-  
+
 }
 
 function pulseUAV(uav){
@@ -290,6 +287,7 @@ function pulseUAV(uav){
   updateUIFlightMode(uav);
 }
 
+// UI stuff, changes badge color if UAV is armed
 function brightenBadge(badge, armed){
   if(armed){
     var color = "#33cc33";
@@ -302,6 +300,7 @@ function brightenBadge(badge, armed){
   setTimeout(function () { dimBadge(badge, armed); }, 400);
 }
 
+// UI stuff
 function dimBadge(badge, armed){
   if(armed){
     var color = "#009900";
@@ -312,11 +311,13 @@ function dimBadge(badge, armed){
   badge.style.background = color;
 }
 
+// TODO: actually decode something
 function decodePX4FlightMode(uav){
   var flight_mode = "MANUAL";
   uav.flight_mode_string = flight_mode;
 }
 
+// updates the flight mode on the UI
 function updateUIFlightMode(uav){
   armed_badge = document.getElementById("current_armed");
   uav_badge = document.getElementById("uav" + uav.id.toString() + "_badge");
@@ -324,10 +325,10 @@ function updateUIFlightMode(uav){
     var output = "A|";
     armed_badge.innerHTML = "ARMED";
   } else {
-    var output = "D|"; 
+    var output = "D|";
     document.getElementById("current_armed").innerHTML = "DISARMED";
   }
-  
+
 
   output += uav.flight_mode_string;
   uav_badge.innerHTML = output;
@@ -337,4 +338,3 @@ function updateUIFlightMode(uav){
     document.getElementById("current_mode_badge").innerHTML = uav.flight_mode_string;
   }
 }
-

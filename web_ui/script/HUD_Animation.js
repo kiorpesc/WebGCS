@@ -1,4 +1,4 @@
-
+// test function
 function canvas_draw () {
     var canvas=document.getElementById("hud_canvas");
 	if (canvas.getContext('2d')){
@@ -9,6 +9,7 @@ function canvas_draw () {
 	}
 }
 
+// test function
 function test_context_pass(context){
         context.fillStyle = "#99cccc";
         context.fillRect (0, 0, 280, 105);
@@ -22,6 +23,7 @@ function test_context_pass(context){
 
 }
 
+// looping function that continuously updates the canvas (continuously calls itself)
 function updateCanvas(canvas, context){
     if(window.current_uav > -1){
       //context.beginPath();
@@ -31,6 +33,7 @@ function updateCanvas(canvas, context){
     setTimeout(function () { updateCanvas(canvas, context); }, 250);
 }
 
+// draws the horizon line on the canvas, using data from the current UAV
 function drawHorizon(canvas, context){
 	var pitch = window.uavs[window.current_uav].pitch;
 	var roll = window.uavs[window.current_uav].roll;
@@ -43,7 +46,7 @@ function drawHorizon(canvas, context){
 	var left_y = canvas.height/2 + Math.round(opp_length);
 	var right_y = canvas.height/2 - Math.round(opp_length);
 	var pitch_offset = Math.sin(pitch) * adj_length;
-    
+
     //draw
     context.beginPath();
 	context.strokeStyle="#000000";
@@ -52,4 +55,3 @@ function drawHorizon(canvas, context){
 	context.lineTo(280, right_y + pitch_offset);
 	context.stroke();
 }
-
