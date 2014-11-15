@@ -31,7 +31,7 @@ var getCurrentLatLng = function () {
 // update the position of the marker every two seconds based on the current UAV 
 var updatePosition = function(){
   window.debug_counter += 1;
-  if (uavs.getCurrentUAVId !== -1){
+  if (uavs.getCurrentUAVId() !== -1){
     var curentLoc = getCurrentLatLng();
     marker.setPosition(currentLoc);
   }
@@ -42,10 +42,10 @@ var updatePosition = function(){
 // when focus moves to a different UAV,
 // or when the user clicks the "Center Map" link on the left
 var centerMap = function(){
-  if (current_uav != -1){
-    var currentLoc = getCurrentLatLng();
-    map.panTo(currentLoc);
-  }
+    if (uavs.getCurrentUAVId() != -1){
+        var currentLoc = getCurrentLatLng();
+        map.panTo(currentLoc);
+    }
 }
 
 google.maps.event.addDomListener(window, 'load', initializeMap);
