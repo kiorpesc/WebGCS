@@ -11,10 +11,10 @@ function canvas_draw () {
 
 // test function
 function test_context_pass(context){
-        context.fillStyle = "#99cccc";
-        context.fillRect (0, 0, 280, 105);
-        context.fillStyle = "#cc9966";
-        context.fillRect (0, 105, 280, 210);
+    context.fillStyle = "#99cccc";
+    context.fillRect (0, 0, 280, 105);
+    context.fillStyle = "#cc9966";
+    context.fillRect (0, 105, 280, 210);
 	context.strokeStyle="#ffffff";
 	context.lineWidth="2";
 	context.moveTo(-10,105);
