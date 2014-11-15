@@ -1,10 +1,13 @@
 var last_lat = 0.0;
 var last_lon = 0.0;
 var intervalID;
-var uavs = new Array();
-var debug_counter = 0;
-var current_uav = -1;
+var uavs = new UAVList();
+// var debug_counter = 0;
+var handler = new MAVLinkHandler();
 
+
+
+/*
 // "class" to hold state of a single UAV
 function UAV(ws, address, port, id) {
   this.socket = ws;
@@ -29,6 +32,7 @@ function UAV(ws, address, port, id) {
   this.flight_modes = [];
 
 }
+*/
 
 /** Create a new UAV connection with WebSockets,
  *  and add the UAV to the navbar.
@@ -212,68 +216,6 @@ function updateModeButtons(id){
 }
 
 
-// process MavLink messages (JSON) from the UAV's server
-function HandleMavlink(msg, id){
-  var msg_json = JSON.parse(msg);
-  var uav = window.uavs[id];
-  if (id === window.current_uav) {
-    if (!msg_json.hasOwnProperty('mavpackettype')){
-      if(msg_json[0] === 'STATUSTEXT'){
-        document.getElementById('status_text').innerHTML = msg_json[1];
-      } else {
-        uavs[current_uav].flight_modes = [];
-        for(var i = 0; i < msg_json.length; i++){
-          uavs[current_uav].flight_modes[i] = msg_json[i];
-        }
-        updateModeButtons(current_uav);
-      }
-  }else{
-  switch(msg_json.mavpackettype)
-  {
-    case 'VFR_HUD':
-      document.getElementById('alt').innerHTML = msg_json.alt.toFixed(3);
-      document.getElementById('heading').innerHTML = msg_json.heading.toFixed(1);
-      break;
-    case 'ATTITUDE':
-       uavs[current_uav].pitch = msg_json.pitch;
-       uavs[current_uav].roll = msg_json.roll;
-      //document.getElementById('pitch').innerHTML = msg_json.pitch.toFixed(6);
-      //document.getElementById('roll').innerHTML = msg_json.roll.toFixed(6);
-      break;
-    case 'GPS_RAW_INT':
-      window.uavs[window.current_uav].lat = msg_json.lat/10000000;
-      document.getElementById('lat').innerHTML = window.uavs[window.current_uav].lat.toFixed(7);
-      window.uavs[window.current_uav].lon = msg_json.lon/10000000;
-      document.getElementById('lon').innerHTML = window.uavs[window.current_uav].lon.toFixed(7);
-      //document.getElementById('time_sec').innerHTML = (msg_json.time_usec/1000000).toFixed(4);
-      break;
-    case 'SYS_STATUS':
-      uavs[current_uav].voltage = msg_json.voltage_battery/1000;  //voltage comes in as milliVolts
-      document.getElementById('airspeed').innerHTML = uavs[current_uav].voltage.toFixed(3) + "V";
-      break;
-    case 'STATUSTEXT':
-      document.getElementById('status_text').innerHTML = msg_json.text;
-      throw new Error(msg_json.text);
-      break;
-    default:
-      //throw new Error(msg);
-      break;
-  }
-  }
-  }
-
-  // heartbeat is always processed.
-  if (msg_json.mavpackettype === 'HEARTBEAT'){
-      uav.base_mode = msg_json.base_mode;
-      uav.custom_mode = msg_json.custom_mode;
-      uav.system_state = msg_json.system_state;
-      uav.autopilot = msg_json.autopilot;
-      pulseUAV(uav);
-  }
-  //debug_counter += 1;
-
-}
-
 function pulseUAV(uav){
   // update UI and data elements based on current heartbeat data
   // check armed state
@@ -311,11 +253,7 @@ function dimBadge(badge, armed){
   badge.style.background = color;
 }
 
-// TODO: actually decode something
-function decodePX4FlightMode(uav){
-  var flight_mode = "MANUAL";
-  uav.flight_mode_string = flight_mode;
-}
+
 
 // updates the flight mode on the UI
 function updateUIFlightMode(uav){

@@ -1,11 +1,9 @@
-// test function
+// begin drawing the canvas
 function canvas_draw () {
     var canvas=document.getElementById("hud_canvas");
 	if (canvas.getContext('2d')){
 		context = canvas.getContext('2d');
 		updateCanvas(canvas, context);
-                //context.fillStyle = "#99cccc";
-                //context.fillRect (0, 0, 280, 105);
 	}
 }
 
