@@ -23,12 +23,17 @@ function initializeMap() {
 
   updatePosition();
 }
- 
+
+var getCurrentLatLng = function () {
+    return new google.maps.LatLng(uavs.getCurrentUAV().getLatitude(), uavs.getCurrentUAV().getLongitude());
+}
+
 // update the position of the marker every two seconds based on the current UAV 
 var updatePosition = function(){
   window.debug_counter += 1;
-  if (current_uav !== -1){
-    marker.setPosition(new google.maps.LatLng(window.uavs[window.current_uav].lat, window.uavs[window.current_uav].lon));
+  if (uavs.getCurrentUAVId !== -1){
+    var curentLoc = getCurrentLatLng();
+    marker.setPosition(currentLoc);
   }
   setTimeout(function(){ updatePosition(); }, 2000);
 }
@@ -38,7 +43,8 @@ var updatePosition = function(){
 // or when the user clicks the "Center Map" link on the left
 var centerMap = function(){
   if (current_uav != -1){
-    map.panTo(new google.maps.LatLng(uavs[current_uav].lat, uavs[current_uav].lon));
+    var currentLoc = getCurrentLatLng();
+    map.panTo(currentLoc);
   }
 }
 
