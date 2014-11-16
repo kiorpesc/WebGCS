@@ -32,7 +32,7 @@ var getCurrentLatLng = function () {
 var updatePosition = function(){
   window.debug_counter += 1;
   if (uavs.getCurrentUAVId() !== -1){
-    var curentLoc = getCurrentLatLng();
+    var currentLoc = getCurrentLatLng();
     marker.setPosition(currentLoc);
   }
   setTimeout(function(){ updatePosition(); }, 2000);

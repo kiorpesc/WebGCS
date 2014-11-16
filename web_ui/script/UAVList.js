@@ -75,7 +75,8 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
         // attach an id to the ws
         ws.UAVid = uavs.getCurrentUAVId();
 
-        console.log("Added new UAV; id = ", ws.UAVid)
+        console.log("Added new UAV; id = ");
+        console.log(ws.UAVid);
 
     }
     

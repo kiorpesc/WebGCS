@@ -67,6 +67,26 @@ UAV.prototype.getFlightModes = function () {
     return this.flight_modes;
 }
 
+UAV.prototype.setFlightModes = function (fms) {
+    this.flight_modes = fms;
+}
+
+UAV.prototype.setPitch = function (p) {
+    this.pitch = p;
+}
+
+UAV.prototype.setRoll = function (r) {
+    this.roll = r;
+}
+
+UAV.prototype.setLatitude = function (l) {
+    this.lat = l;
+}
+
+UAV.prototype.setLongitude = function (l) {
+    this.lon = l;
+}
+
 UAV.prototype.setBaseMode = function (mode) {
     this.base_mode = mode;
 }
@@ -81,6 +101,10 @@ UAV.prototype.setAutopilot = function (ap) {
 
 UAV.prototype.setSystemState = function (ss) {
     this.system_state = ss;
+}
+
+UAV.prototype.setVoltage = function (v) {
+    this.voltage = v;
 }
 
 UAV.prototype.isArmed = function () {

@@ -20,7 +20,7 @@ MAVLinkHandler.prototype.handleMavlink = function (msg, id) {
                 document.getElementById('status_text').innerHTML = msg_json[1];
             } else {
                 uav.setFlightModes(msg_json);
-                updateModeButtons(current_uav);
+                updateModeButtons(id);
             }
         }else{
             switch(msg_json.mavpackettype)
@@ -42,7 +42,7 @@ MAVLinkHandler.prototype.handleMavlink = function (msg, id) {
                     document.getElementById('lon').innerHTML = uav.getLongitude().toFixed(7);
                     break;
                 case 'SYS_STATUS':
-                    uavs.setVoltage(msg_json.voltage_battery/1000);  //voltage comes in as milliVolts
+                    uav.setVoltage(msg_json.voltage_battery/1000);  //voltage comes in as milliVolts
                     document.getElementById('airspeed').innerHTML = uav.getVoltage().toFixed(3) + "V";
                     break;
                 case 'STATUSTEXT':

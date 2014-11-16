@@ -79,7 +79,7 @@
               <div class="list-group-item" id="hud_display">
                 <canvas id="hud_canvas" height="210" width="280" style="z-index: 10">Sorry, your browser does not support canvas.</canvas>
               </div>
-              <a href="#" onclick="sendCommand('ARM');" class="list-group-item">
+              <a href="#" onclick="uavs.getCurrentUAV().sendCommand('ARM');" class="list-group-item">
                 <span class="badge" id="current_armed">ARMED</span>
                 Arm/Disarm
               </a>

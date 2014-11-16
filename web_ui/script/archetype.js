@@ -199,12 +199,14 @@ function updateUAVIds(){
 // gets the available flight modes from the current UAV
 // and updates the options available on the interface
 function updateModeButtons(id){
-  if(current_uav != -1){
+  if(uavs.getCurrentUAVId() != -1){
     var modes_div = document.getElementById('flight_modes');
     modes_div.innerHTML = '';
-    for(var i = 0; i < uavs[id].flight_modes.length; i++){
-      var mode = uavs[id].flight_modes[i];
-      var command = "sendCommand('" + mode + "');";
+    var uav = uavs.getUAVById(id);
+    var modes = uav.getFlightModes();
+    for(var i = 0; i < modes.length; i++){
+      var mode = modes[i];
+      var command = "uavs.getCurrentUAV().sendCommand('" + mode + "');";
       var link = document.createElement("a");
       link.setAttribute('href', '#');
       link.setAttribute('class', 'list-group-item');
@@ -222,7 +224,7 @@ function pulseUAV(uav){
   uav.armed = ((uav.base_mode & 128) >> 7 === 1)
   // check flight mode
   if (uav.autopilot === 12){
-    decodePX4FlightMode(uav);
+    handler.decodePX4FlightMode(uav);
   } /*else {
     decodeArdupilotFlightMode(uav);
   }*/
