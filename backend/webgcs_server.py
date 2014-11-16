@@ -38,6 +38,7 @@ MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE = 0b00000001
 DISARM_MASK                               = 0b01111111
 ARMED_MASK                                = 0b10000000
 
+server_state = None
 uav_module = None
 
 class MainHandler(tornado.web.RequestHandler):
@@ -45,8 +46,12 @@ class MainHandler(tornado.web.RequestHandler):
         self.render("blank.html")
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
+    # allow cross-origin connections for now
+    def check_origin(self, origin):
+        return True
+
     def open(self):
-        global server_State
+        global server_state
         server_state.ws_count += 1
         server_state.websockets.append(self)
         #try:
@@ -166,7 +171,7 @@ def handle_msec_timestamp(m, master):
 
     msec = m.time_boot_ms
     if msec + 30000 < server_state.highest_msec:
-        say('Time has wrapped')
+        #say('Time has wrapped')
         print('Time has wrapped', msec, server_state.highest_msec)
         server_state.highest_msec = msec
         server_state.link_delayed = False
@@ -297,6 +302,7 @@ def create_mavlink_connection():
             m.mav.set_send_callback(master_send_callback, m)
         m.link_delayed = False
 
+        print('Connected to UAV')
         return m
 
 
@@ -371,6 +377,9 @@ if __name__ == "__main__":
 
     # create mavlink connection with the master
     server_state.mavconn = create_mavlink_connection()
+
+    if opts.master.find('ACM') != 0:
+        server_state.mavconn.write('\n\nsh /etc/init.d/rc.usb\n')
 
     # start server in new thread
     start_server(server_state)
