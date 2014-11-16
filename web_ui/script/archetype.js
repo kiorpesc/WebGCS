@@ -60,7 +60,7 @@ function newUAVLink(ip_port_string){
   ws.onmessage = function(evt){
     var msg = evt.data;
     var ws_id = getWSId(ws);
-    HandleMavlink(msg, ws_id);
+    handler.handleMavlink(msg, ws_id);
   }
 
   // what if there is an error?

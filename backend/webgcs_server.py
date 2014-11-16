@@ -172,7 +172,7 @@ def handle_msec_timestamp(m, master):
     msec = m.time_boot_ms
     if msec + 30000 < server_state.highest_msec:
         #say('Time has wrapped')
-        print('Time has wrapped', msec, server_state.highest_msec)
+        #print('Time has wrapped', msec, server_state.highest_msec)
         server_state.highest_msec = msec
         server_state.link_delayed = False
 
@@ -216,6 +216,7 @@ def master_callback(m, master):
             return
 
     if mtype == 'HEARTBEAT' and m.get_srcSystem() != 255:
+        print('lub dub')
     	if (server_state.target_system != m.get_srcSystem() or
             server_state.target_component != m.get_srcComponent()):
             server_state.target_system = m.get_srcSystem()

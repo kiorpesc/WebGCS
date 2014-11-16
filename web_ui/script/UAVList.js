@@ -43,6 +43,20 @@ UAVList.prototype.getCurrentUAV = function () {
     return this.uavs[this.current_uav];
 }
 
+UAVList.prototype.getNumUAVs = function () {
+    return this.uavs.length;
+}
+
+UAVList.prototype.setCurrentUAV = function(id) {
+    this.current_uav = id;
+}
+
+UAVList.prototype.addUAV = function(ws, address, port) {
+    var id = this.uavs.length;
+    this.uavs[id] = new UAV(ws, address, port, id);
+    this.setCurrentUAV(id);
+}
+
 UAVList.prototype.addUAVLink = function (ip_port_string) {
     var ip_port = ip_port_string.split(":");
     var ws = new WebSocket("ws://" + ip_port_string + "/websocket");
@@ -50,18 +64,19 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     // on websocket open, link the new socket to a new UAV
     // and switch focus to the new UAV
     ws.onopen = function () {
-        var id = this.uavs.length;  // will "this" work here?
         if (ip_port.length < 2) {
             ip_port[1] = "80";
         }
-        this.uavs[id] = new UAV(ws, ip_port[0], ip_port[1], id);
-        this.current_uav = id;
+        uavs.addUAV(ws, ip_port[0], ip_port[1]);
         
         // TODO: put UI functions inside of UI Namespace?
-        addUAVTabById(id);
+        addUAVTabById(uavs.getCurrentUAVId());
         
         // attach an id to the ws
-        ws.UAVid = id;
+        ws.UAVid = uavs.getCurrentUAVId();
+
+        console.log("Added new UAV; id = ", ws.UAVid)
+
     }
     
     // process received messages
@@ -70,7 +85,7 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
         var ws_id = ws.UAVid;   // might not be needed
         
         // TODO: Mavlink handling in own class
-        HandleMavlink(msg, ws_id);
+        handler.handleMavlink(msg, ws_id);
     }
     
     // handle socket errors
