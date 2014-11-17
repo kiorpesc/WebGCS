@@ -29,9 +29,7 @@ function WebMocket (addr) {
         text: "Status message.",
     }
     
-    function () {
-        setTimeout(this.generateHeartbeat, 1000);
-    }
+    setTimeout(this.generateHeartbeat, 1000);
 }
 
 
