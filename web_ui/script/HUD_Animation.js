@@ -23,7 +23,7 @@ function test_context_pass(context){
 
 // looping function that continuously updates the canvas (continuously calls itself)
 function updateCanvas(canvas, context){
-    if(window.current_uav > -1){
+    if(uavs.getCurrentUAVId() > -1){
       //context.beginPath();
       context.clearRect(0,  0, canvas.width, canvas.height);
 	  drawHorizon(canvas, context);
@@ -33,8 +33,8 @@ function updateCanvas(canvas, context){
 
 // draws the horizon line on the canvas, using data from the current UAV
 function drawHorizon(canvas, context){
-	var pitch = window.uavs[window.current_uav].pitch;
-	var roll = window.uavs[window.current_uav].roll;
+	var pitch = uavs.getCurrentUAV().getPitch();
+	var roll = uavs.getCurrentUAV().getRoll();
 	//start simple, calculate line position based on roll
 	var sin_theta = Math.sin(roll);
 	var cos_theta = Math.cos(roll);

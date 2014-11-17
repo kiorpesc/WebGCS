@@ -58,9 +58,20 @@ UAVList.prototype.addUAV = function(ws, address, port) {
 }
 
 UAVList.prototype.addUAVLink = function (ip_port_string) {
+    var ws;
     var ip_port = ip_port_string.split(":");
-    var ws = new WebSocket("ws://" + ip_port_string + "/websocket");
+    
+    if (ip_port_string === "sw-testing"){
+        // use fake websocket
+        ws = new WebMocket("ws://" + ip_port_string + "/websocket")    
+    } else {    
+        ws = new WebSocket("ws://" + ip_port_string + "/websocket");
+    }
+    
+    this.setUpWebSocket(ws);
+}
 
+UAVList.prototype.setUpWebSocket = function (ws) {
     // on websocket open, link the new socket to a new UAV
     // and switch focus to the new UAV
     ws.onopen = function () {
