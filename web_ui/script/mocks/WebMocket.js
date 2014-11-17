@@ -43,7 +43,7 @@ WebMocket.prototype.close = function() {
 
 WebMocket.prototype.generateHeartbeat = function () {
     
-    JSON.stringify(this.heartbeat);
+    console.log(this.heartbeat);
     
     setTimeout(this.generateHeartbeat, 1000);
 }
