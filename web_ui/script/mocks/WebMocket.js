@@ -10,13 +10,13 @@
 
 function WebMocket (addr) {
     this.url = addr;
-    this.heartbeat = {
-        mavpackettype : 'HEARTBEAT',
-        autopilot     : 12,
-        system_state  : 3,    // 3 is standby, 4 is active
-        base_mode     : 0,
-        custom_mode   : 0,
-    };
+    this.heartbeat = function() {
+        this.mavpackettype = 'HEARTBEAT';
+        this.autopilot = 12;
+        this.system_state = 3;    // 3 is standby, 4 is active
+        this.base_mode = 0;
+        this.custom_mode = 0;
+    }
     this.vfr_hud = {
         mavpackettype: 'VFR_HUD',
         alt:    100.0,      // 100 m
