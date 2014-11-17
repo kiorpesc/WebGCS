@@ -43,7 +43,7 @@ WebMocket.prototype.close = function() {
 
 WebMocket.prototype.generateHeartbeat = function () {
     
-    console.log(this.heartbeat);
+    handler.handleMavLink(JSON.stringify(this.heartbeat));
     
     setTimeout(this.generateHeartbeat, 1000);
 }
