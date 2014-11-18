@@ -50,9 +50,9 @@ UAVList.prototype.setCurrentUAV = function(id) {
     this.current_uav = id;
 }
 
-UAVList.prototype.addUAV = function(ws, address, port) {
+UAVList.prototype.addUAV = function(ws) {
     var id = this.uavs.length;
-    this.uavs[id] = new UAV(ws, address, port, id);
+    this.uavs[id] = new UAV(ws, id);
     this.setCurrentUAV(id);
     console.log(id);
     console.log(uavs);
@@ -82,11 +82,7 @@ UAVList.prototype.setUpWebSocket = function (ws, uavlist) {
     // on websocket open, link the new socket to a new UAV
     // and switch focus to the new UAV
     ws.onopen = function () {
-        if (ip_port.length < 2) {
-            ip_port[1] = "80";
-        }
-        
-        uavlist.addUAV(ws, ip_port[0], ip_port[1]);
+        uavlist.addUAV(ws);
         
         // TODO: put UI functions inside of UI Namespace?
         addUAVTabById(uavlist.getCurrentUAVId());

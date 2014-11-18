@@ -8,10 +8,8 @@
 */
 
 // "class" to hold state of a single UAV
-var UAV = function (ws, address, port, id) {
+var UAV = function (ws, id) {
   this.socket = ws;
-  this.address = address;
-  this.port = port;
   this.id = id;
   this.last_heartbeat = 0;
   this.base_mode = 0;
