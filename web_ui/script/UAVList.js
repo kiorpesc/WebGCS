@@ -64,15 +64,14 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     
     if (ip_port_string !== "sw-testing"){
         full_address += "/websocket";
+        ws = new WebSocket(full_address);
+    } else {
+        ws = new WebMocket(full_address);
     }
-    
-    ws = new WebSocket(full_address);
     this.setUpWebSocket(ws);
     
-    if (ip_port_string === "sw-testing"){
-        //loadjscssfile('scripts/TestResources.js', 'js');
-        this.testResources = new Mocks(ws);
-        this.testResources.generateHeartbeat();
+    if(ip_port_string === "sw-testing") {
+        ws.generateHeartbeat();
     }
 }
 

@@ -10,13 +10,13 @@
 
 function WebMocket (addr) {
     this.url = addr;
-    this.heartbeat = function() {
-        this.mavpackettype = 'HEARTBEAT';
-        this.autopilot = 12;
-        this.system_state = 3;    // 3 is standby, 4 is active
-        this.base_mode = 0;
-        this.custom_mode = 0;
-    }
+    this.heartbeat = {
+        mavpackettype : 'HEARTBEAT',
+        autopilot : 12,
+        system_state : 3,    // 3 is standby, 4 is active
+        base_mode : 0,
+        custom_mode : 0,
+    };
     this.vfr_hud = {
         mavpackettype: 'VFR_HUD',
         alt:    100.0,      // 100 m
@@ -24,10 +24,10 @@ function WebMocket (addr) {
     };
     this.sys_status = {
         voltage: 12000,     // 12V
-    }
+    };
     this.statustext = {
         text: "Status message.",
-    }
+    };
     
     setTimeout(this.generateHeartbeat, 1000);
 }
@@ -48,6 +48,10 @@ WebMocket.prototype.onclose = function () {
     
 }
 
+WebMocket.prototype.dispatchEvent(type, e) {
+    this.onmessage(e);
+}
+
 WebMocket.prototype.send = function (msg) {
     console.log(msg);
 }
@@ -57,8 +61,9 @@ WebMocket.prototype.close = function() {
 }
 
 WebMocket.prototype.generateHeartbeat = function () {
-    
-    self.onmessage(JSON.stringify(this.heartbeat));
+    this.socket.dispatchEvent(new MessageEvent( "message", {
+        data: this.heartbeat
+    }));
     
     setTimeout(this.generateHeartbeat, 1000);
 }
