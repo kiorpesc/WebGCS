@@ -68,6 +68,4 @@ WebMocket.prototype.generateHeartbeat = function () {
     });
     
     this.dispatchEvent(msg_evt);
-    
-    setTimeout(this.generateHeartbeat, 1000);
 }
