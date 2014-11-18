@@ -14,6 +14,8 @@ var MAVLinkHandler = function () {
 
 MAVLinkHandler.prototype.handleMavlink = function (msg, id) {
     var msg_json = JSON.parse(msg);
+    console.log("IN MAVLINKHANDLER");
+    console.log(uavs);
     var uav = uavs.getUAVById(id);
     if (id === uavs.getCurrentUAVId()) {
         if (!msg_json.hasOwnProperty('mavpackettype')){
