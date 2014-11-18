@@ -5,144 +5,6 @@ var uavs = new UAVList();
 // var debug_counter = 0;
 var handler = new MAVLinkHandler();
 
-
-
-/*
-// "class" to hold state of a single UAV
-function UAV(ws, address, port, id) {
-  this.socket = ws;
-  this.address = address;
-  this.port = port;
-  this.id = id;
-  this.last_heartbeat = 0;
-  this.base_mode = 0;
-  this.custom_mode = 0;
-  this.flight_mode_string = ""
-  this.system_state = 0;
-  this.armed = false;
-  this.pitch = 0;
-  this.roll = 0;
-  this.yaw = 0;
-  this.lat = 0;
-  this.lon = 0;
-  this.alt = 0;
-  this.airspeed = 0;
-  this.autopilot = 0;
-  this.voltage = 0;
-  this.flight_modes = [];
-
-}
-*/
-
-/** Create a new UAV connection with WebSockets,
- *  and add the UAV to the navbar.
- */
-function newUAVLink(ip_port_string){
-  var ip_port = ip_port_string.split(":");
-  var ws = new WebSocket("ws://" + ip_port_string + "/websocket");
-
-  // on websocket open, link the new websocket to a new UAV
-  // and switch our focus to the new UAV
-  ws.onopen = function() {
-    var id = window.uavs.length;
-    if (ip_port.length > 1){
-      window.uavs[id] = new UAV(ws, ip_port[0], ip_port[1], id);
-    }
-    else {
-      window.uavs[id] = new UAV(ws, ip_port[0], 80, id);
-    }
-    window.current_uav = id;
-    addUAVTabById(id);
-    // alert('Connected. uav id=' + id.toString());
-  }
-
-  // process received messages
-  ws.onmessage = function(evt){
-    var msg = evt.data;
-    var ws_id = getWSId(ws);
-    handler.handleMavlink(msg, ws_id);
-  }
-
-  // what if there is an error?
-  // TODO: stop using alerts and confirmation windows
-  ws.onerror = function() {
-    var ws_id = getWSId(ws);
-    if(confirm("UAV " + ws_id.toString() + " connection error. Attempt reconnect?")){
-      reconnectUAV(ws_id);
-    }
-    else {
-      removeUAVById(ws_id);
-      alert("UAV " + ws_id.toString() + " removed.");
-      ws.close();
-    }
-  }
-
-  // TODO: handle closing the link?
-  ws.onclose = function() {
-    var ws_id = getWSId(ws);
-  }
-} // end newUAVLink
-
-
-/* Attempt to reestablish communications with a UAV. */
-// FIXME: currently causes issues - also is essentially the same code as above.
-function reconnectUAV(id) {
-  uavs[id].ws.close();
-  var ws = new WebSocket("ws://" + window.uavs[id].address + ":" + window.uavs[id].port + "/websocket");
-
-  ws.onopen = function() {
-    var id = uavs.length;
-    window.uavs.socket = ws;
-    // window.current_uav = id;
-    // alert('Connection established.');
-  }
-  ws.onmessage = function(evt){
-    var msg = evt.data;
-    var ws_id = getWSId(ws);
-    if (ws_id === -1){
-      throw new Error('ws_id is not correct');
-    }
-    HandleMavlink(msg, ws_id);
-  }
-
-  ws.onerror = function() {
-    var ws_id = getWSId(ws);
-    if(confirm("UAV " + ws_id.toString() + " connection error. Attempt reconnect?")){
-      //close and reopen web socket
-    }
-    else {
-      removeUAVById(ws_id);
-      alert("UAV " + ws_id.toString() + " removed.");
-    }
-  }
-
-  ws.onclose = function() {
-    var ws_id = getWSId(ws);
-    alert("Connection with UAV " + ws_id.toString() + "closed.");
-  }
-} // end reconnectUAV
-
-// rudimentary linear search through UAVs for the current one
-function getWSId(ws){
-  for(var i = 0; i < window.uavs.length; i++){
-    if (ws === window.uavs[i].socket){
-      return window.uavs[i].id;
-    }
-  }
-    return -1;
-}
-
-// send a command to the UAV server
-function sendCommand(cmd_string){
-  var command = cmd_string
-  if(cmd_string === 'ARM'){
-    if(uavs[current_uav].armed){
-        command = 'DISARM';
-    }
-  }
-  uavs[current_uav].socket.send(command);
-}
-
 // add a new tab to the interface when a new UAV connection is established
 function addUAVTabById(id){
   var container= document.getElementById('current_uavs_ul');
@@ -173,19 +35,20 @@ function removeUAVById(id){
   var container= document.getElementById('current_uavs_ul');
   var child = document.getElementById('uav' + id.toString())
   container.removeChild(child);
-  window.uavs[id].socket.close();
-  window.uavs.splice(id, 1);
+  uavs.getUAVById(id).getSocket().close();
+  window.uavs.splice(id, 1);  // ?
   //update current uav number and highlight
-  if(window.uavs.length === 0){
-    current_uav = -1;
+  if(uavs.getNumUAVs() === 0){
+    uavs.setCurrentUAV(-1);
   } else {
     updateUAVIds();
-    current_uav = 0;
+    uavs.setCurrentUAV(0);
     document.getElementById("uav0").setAttribute("class", "active");
-    updateModeButtons(current_uav);
+    updateModeButtons(uavs.getCurrentUAVId());
   }
 }
 
+// TODO: put this inside of UAVList
 // when a UAV is removed that is not the last in the list,
 // the id numbers need to be updated to reflect the new array positions.
 function updateUAVIds(){
@@ -196,6 +59,7 @@ function updateUAVIds(){
   }
 }
 
+// UI
 // gets the available flight modes from the current UAV
 // and updates the options available on the interface
 function updateModeButtons(id){
@@ -217,7 +81,7 @@ function updateModeButtons(id){
   }
 }
 
-
+// UI
 function pulseUAV(uav){
   // update UI and data elements based on current heartbeat data
   // check armed state
