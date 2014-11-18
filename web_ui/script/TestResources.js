@@ -29,7 +29,7 @@ var Mocks = function (ws) {
 }
 
 Mocks.prototype.generateHeartbeat = function () {
-    this.socket.dispatchevent(new MessageEvent( "message", {
+    this.socket.dispatchEvent(new MessageEvent( "message", {
         data: this.heartbeat
     }));
     
