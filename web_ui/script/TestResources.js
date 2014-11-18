@@ -33,5 +33,5 @@ Mocks.prototype.generateHeartbeat = function () {
         data: this.heartbeat
     }));
     
-    setTimeout(generateHeartbeat, 1000);
+    setTimeout(this.generateHeartbeat, 1000);
 }
