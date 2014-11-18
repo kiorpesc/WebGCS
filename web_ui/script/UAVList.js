@@ -74,7 +74,8 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     
     if(ip_port_string === "sw-testing") {
         ws.onopen();
-        setInterval(ws.generateHeartbeat, 1000);
+        ws.beginTransmitting();
+      
     }
 }
 

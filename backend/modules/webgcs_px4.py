@@ -62,7 +62,15 @@ def base_mode_value(new_custom_mode):
         return (base_mode & ARMED_MASK | MAV_MODE_FLAG_DECODE_POSITION_MANUAL | MAV_MODE_FLAG_DECODE_POSITION_STABILIZE | MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE) #_1010001
 
 def get_modes():
-	return json.dumps([ 'MANUAL', 'SEATBELT', 'EASY', 'AUTO-READY', 'AUTO-TAKEOFF', 'AUTO-LOITER', 'AUTO-MISSION', 'AUTO-RTL', 'AUTO-LAND'])
+	return json.dumps(['MANUAL',
+                         'SEATBELT',
+                         'EASY',
+                         'AUTO-READY',
+                         'AUTO-TAKEOFF',
+                         'AUTO-LOITER',
+                         'AUTO-MISSION',
+                         'AUTO-RTL',
+                         'AUTO-LAND'])
 
 def convert_command(msg):
     if msg == 'ARM':

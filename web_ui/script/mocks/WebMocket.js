@@ -17,6 +17,15 @@ function WebMocket (addr) {
         base_mode : 0,
         custom_mode : 0,
     };
+    this.flight_modes = ['MANUAL',
+                         'SEATBELT',
+                         'EASY',
+                         'AUTO-READY',
+                         'AUTO-TAKEOFF',
+                         'AUTO-LOITER',
+                         'AUTO-MISSION',
+                         'AUTO-RTL',
+                         'AUTO-LAND'];
     this.vfr_hud = {
         mavpackettype: 'VFR_HUD',
         alt:    100.0,      // 100 m
@@ -60,12 +69,34 @@ WebMocket.prototype.close = function() {
     self.onclose();
 }
 
+WebMocket.prototype.wrapEvent = function (contents) {
+    var data_str = JSON.stringify(contents);
+    return new MessageEvent("message", {
+        data: data_str,
+    });
+}
+
+WebMocket.prototype.sendFlightModes = function () {
+    var msg_evt = wrapEvent(this.flight_modes);
+    this.dispatchEvent(msg_evt);
+}
+
+WebMocket.prototype.generateVFR_HUD = function () {
+    
+}
+
 WebMocket.prototype.generateHeartbeat = function () {
     console.log("Generating lub dub");
-    var data_str = JSON.stringify(this.heartbeat);
-    var msg_evt = new MessageEvent("message", {
-        data : data_str,
-    });
+    //var data_str = JSON.stringify(this.heartbeat);
+    //var msg_evt = new MessageEvent("message", {
+    //    data : data_str,
+    //});
     
+    var msg_evt = wrapEvent(this.heartbeat);
     this.dispatchEvent(msg_evt);
+}
+
+WebMocket.prototype.beginTransmitting = function () {
+    this.sendFlightModes();
+    setInterval(this.generateHeartbeat, 1000);
 }
