@@ -65,6 +65,7 @@ MAVLinkHandler.prototype.handleMavlink = function (msg, id) {
         uav.setCustomMode(msg_json.custom_mode);
         uav.setSystemState(msg_json.system_state);
         uav.setAutopilot(msg_json.autopilot);
+        updateUIFlightMode(uav);
         pulseUAV(uav);
     }
     //debug_counter += 1;
