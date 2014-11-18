@@ -61,6 +61,7 @@ WebMocket.prototype.close = function() {
 }
 
 WebMocket.prototype.generateHeartbeat = function () {
+    console.log("Generating lub dub");
     var data_str = JSON.stringify(this.heartbeat);
     var msg_evt = new MessageEvent("message", {
         data : data_str,
