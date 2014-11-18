@@ -70,27 +70,28 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     } else {
         ws = new WebMocket(full_address);
     }
-    this.setUpWebSocket(ws);
+    this.setUpWebSocket(ws, this);
     
     if(ip_port_string === "sw-testing") {
         ws.generateHeartbeat();
     }
 }
 
-UAVList.prototype.setUpWebSocket = function (ws) {
+UAVList.prototype.setUpWebSocket = function (ws, uavlist) {
     // on websocket open, link the new socket to a new UAV
     // and switch focus to the new UAV
     ws.onopen = function () {
         if (ip_port.length < 2) {
             ip_port[1] = "80";
         }
-        uavs.addUAV(ws, ip_port[0], ip_port[1]);
+        
+        uavlist.addUAV(ws, ip_port[0], ip_port[1]);
         
         // TODO: put UI functions inside of UI Namespace?
-        addUAVTabById(uavs.getCurrentUAVId());
+        addUAVTabById(uavlist.getCurrentUAVId());
         
         // attach an id to the ws
-        ws.UAVid = uavs.getCurrentUAVId();
+        ws.UAVid = uavlist.getCurrentUAVId();
 
         console.log("Added new UAV; id = ");
         console.log(ws.UAVid);
