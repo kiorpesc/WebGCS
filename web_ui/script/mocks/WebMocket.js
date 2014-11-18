@@ -77,7 +77,7 @@ WebMocket.prototype.wrapEvent = function (contents) {
 }
 
 WebMocket.prototype.sendFlightModes = function () {
-    var msg_evt = wrapEvent(this.flight_modes);
+    var msg_evt = this.wrapEvent(this.flight_modes);
     this.dispatchEvent(msg_evt);
 }
 
@@ -92,7 +92,7 @@ WebMocket.prototype.generateHeartbeat = function () {
     //    data : data_str,
     //});
     
-    var msg_evt = wrapEvent(this.heartbeat);
+    var msg_evt = this.wrapEvent(this.heartbeat);
     this.dispatchEvent(msg_evt);
 }
 
