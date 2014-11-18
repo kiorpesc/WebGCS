@@ -59,8 +59,14 @@ UAVList.prototype.addUAV = function(ws, address, port) {
 UAVList.prototype.addUAVLink = function (ip_port_string) {
     var ws;
     var ip_port = ip_port_string.split(":");
+    var full_address = "ws://" + ip_port_string;
     
-    ws = new WebSocket("ws://" + ip_port_string + "/websocket");
+    
+    if (ip_port_string !== "sw-testing"){
+        full_address += "/websocket";
+    }
+    
+    ws = new WebSocket(full_address);
     this.setUpWebSocket(ws);
     
     if (ip_port_string === "sw-testing"){
