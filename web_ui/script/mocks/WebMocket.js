@@ -32,6 +32,21 @@ function WebMocket (addr) {
     setTimeout(this.generateHeartbeat, 1000);
 }
 
+WebMocket.prototype.onopen = function () {
+    
+}
+
+WebMocket.prototype.onmessage = function (msg) {
+    
+}
+
+WebMocket.prototype.onerror = function () {
+    
+}
+
+WebMocket.prototype.onclose = function () {
+    
+}
 
 WebMocket.prototype.send = function (msg) {
     console.log(msg);
@@ -43,7 +58,7 @@ WebMocket.prototype.close = function() {
 
 WebMocket.prototype.generateHeartbeat = function () {
     
-    handler.handleMavLink(JSON.stringify(this.heartbeat));
+    self.onmessage(JSON.stringify(this.heartbeat));
     
     setTimeout(this.generateHeartbeat, 1000);
 }

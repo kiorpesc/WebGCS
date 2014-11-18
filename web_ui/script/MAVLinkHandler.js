@@ -9,6 +9,7 @@
 
 var MAVLinkHandler = function () {
     // what goes here?
+    this.msg_count = 0;
 }
 
 MAVLinkHandler.prototype.handleMavlink = function (msg, id) {

@@ -10,7 +10,6 @@
 var UAVList = function () {
     this.uavs = new Array();
     this.current_uav = -1;
-    
 }
 
 UAVList.prototype.getUAVById = function(id) {
@@ -61,14 +60,14 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     var ws;
     var ip_port = ip_port_string.split(":");
     
-    if (ip_port_string === "sw-testing"){
-        // use fake websocket
-        ws = new WebMocket("ws://" + ip_port_string + "/websocket")    
-    } else {    
-        ws = new WebSocket("ws://" + ip_port_string + "/websocket");
-    }
-    
+    ws = new WebSocket("ws://" + ip_port_string + "/websocket");
     this.setUpWebSocket(ws);
+    
+    if (ip_port_string === "sw-testing"){
+        loadjscssfile('TestResources.js', js);
+        this.testResources = new TestResources(ws);
+        this.testResources.generateHeartbeat();
+    }
 }
 
 UAVList.prototype.setUpWebSocket = function (ws) {
@@ -108,6 +107,7 @@ UAVList.prototype.setUpWebSocket = function (ws) {
             // reconnect
         } else {
             // remove UAV from UI
+            removeUAVById(ws_id);
             ws.close();
         }   
     }
