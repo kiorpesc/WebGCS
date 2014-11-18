@@ -48,7 +48,7 @@ WebMocket.prototype.onclose = function () {
     
 }
 
-WebMocket.prototype.dispatchEvent = function (type, e) {
+WebMocket.prototype.dispatchEvent = function (e) {
     this.onmessage(e);
 }
 
@@ -61,8 +61,9 @@ WebMocket.prototype.close = function() {
 }
 
 WebMocket.prototype.generateHeartbeat = function () {
+    var data_str = JSON.stringify(this.heartbeat);
     var msg_evt = {
-        data : JSON.stringify(this.heartbeat),
+        data : data_str,
     };
     
     this.dispatchEvent(msg_evt);
