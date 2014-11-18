@@ -64,8 +64,8 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     this.setUpWebSocket(ws);
     
     if (ip_port_string === "sw-testing"){
-        loadjscssfile('scripts/TestResources.js', 'js');
-        //this.testResources = new Mocks(ws);
+        //loadjscssfile('scripts/TestResources.js', 'js');
+        this.testResources = new Mocks(ws);
         this.testResources.generateHeartbeat();
     }
 }
