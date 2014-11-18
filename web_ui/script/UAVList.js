@@ -73,6 +73,7 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     this.setUpWebSocket(ws, this);
     
     if(ip_port_string === "sw-testing") {
+        ws.onopen();
         ws.generateHeartbeat();
     }
 }
