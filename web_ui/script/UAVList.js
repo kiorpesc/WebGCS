@@ -65,7 +65,7 @@ UAVList.prototype.addUAVLink = function (ip_port_string) {
     
     if (ip_port_string === "sw-testing"){
         loadjscssfile('scripts/TestResources.js', 'js');
-        this.testResources = new Mocks(ws);
+        //this.testResources = new Mocks(ws);
         this.testResources.generateHeartbeat();
     }
 }
