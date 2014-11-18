@@ -48,7 +48,7 @@ WebMocket.prototype.onclose = function () {
     
 }
 
-WebMocket.prototype.dispatchEvent(type, e) {
+WebMocket.prototype.dispatchEvent = function (type, e) {
     this.onmessage(e);
 }
 
