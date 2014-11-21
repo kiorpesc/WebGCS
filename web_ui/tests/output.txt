@@ -1,0 +1,32 @@
+[33mU[0m[33mU[0m[33mU[0m[33mU[0m[33mU[0m[33mU[0m
+
+2 scenarios ([33m2 undefined[0m)
+6 steps ([33m6 undefined[0m)
+
+[33mYou can implement step definitions for undefined steps with these snippets:[0m
+
+[33mthis.Given(/^There are no UAVs connected$/, function (callback) {[0m
+[33m  // Write code here that turns the phrase above into concrete actions[0m
+[33m  callback.pending();[0m
+[33m});[0m
+
+[33mthis.When(/^I view the page$/, function (callback) {[0m
+[33m  // Write code here that turns the phrase above into concrete actions[0m
+[33m  callback.pending();[0m
+[33m});[0m
+
+[33mthis.Then(/^I should not see a map marker$/, function (callback) {[0m
+[33m  // Write code here that turns the phrase above into concrete actions[0m
+[33m  callback.pending();[0m
+[33m});[0m
+
+[33mthis.Given(/^There is only one UAV attached$/, function (callback) {[0m
+[33m  // Write code here that turns the phrase above into concrete actions[0m
+[33m  callback.pending();[0m
+[33m});[0m
+
+[33mthis.Then(/^I should see a map marker at my UAV's current GPS location$/, function (callback) {[0m
+[33m  // Write code here that turns the phrase above into concrete actions[0m
+[33m  callback.pending();[0m
+[33m});[0m
+

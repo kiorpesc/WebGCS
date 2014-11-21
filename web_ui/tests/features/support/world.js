@@ -1,22 +1,13 @@
-// features/support/world.js
-var webdriver = require("phantomjs");
+var zombie = require('zombie');
+var WorldConstructor = function WorldConstructor(callback) {
+  this.browser = new zombie(); // this.browser will be available in step definitions
 
-var World = function World(callback) {
-    this.driver = new webdriver.Builder().
-      withCapabilities(webdriver.Capabilities.chrome()).
-      build();
+  var world = {
+    visit: function(url, callback) {
+      this.browser.visit(url, callback);
+    }.bind(this)
+  };
 
-    callback();
-}
-
-module.exports = World;
-
-// features/support/after_hooks.js
-var myAfterHooks = function () {
-    this.registerHandler('AfterFeatures', function (event, callback) {
-      this.driver.close();
-      callback();
-    });
-}
-
-module.exports = myAfterHooks;
+  callback(world); // tell Cucumber we're finished and to use our world object instead of 'this'
+};
+exports.World = WorldConstructor;

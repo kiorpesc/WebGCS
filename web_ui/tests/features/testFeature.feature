@@ -1,14 +1,10 @@
-Feature: UAV Location on Map
-  As a UAV pilot
-  I want to see where my UAV is on a map
-  So that I can keep track of the UAV
 
-  Scenario: No UAVs
-    Given There are no UAVs connected
-    When I view the page
-    Then I should not see a map marker
-  
-  Scenario: One UAV
-    Given There is only one UAV attached
-    When I view the page
-    Then I should see a map marker at my UAV's current GPS location
+Feature: Example feature
+  As a user of cucumber.js
+  I want to have documentation on cucumber
+  So that I can concentrate on building awesome applications
+
+  Scenario: Reading documentation
+    Given I am on the Cucumber.js GitHub repository
+    When I go to the README file
+    Then I should see "Usage" as the page title
