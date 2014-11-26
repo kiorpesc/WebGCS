@@ -1,6 +1,7 @@
 var myStepDefinitionsWrapper = function () {
   this.World = require("../support/world.js").World; // overwrite default World constructor
-
+  this.browser = this.World.browser;
+    
   var assert = require('assert');
     
   this.Given(/^I am viewing the app$/, function(callback) {
@@ -41,7 +42,7 @@ var myStepDefinitionsWrapper = function () {
   
   this.Given(/^I connect a single UAV$/, function(callback) {
       this.clickLink("#add-uav-link", function() {
-          browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
+          this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
       })
   });  
     
