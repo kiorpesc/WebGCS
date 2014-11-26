@@ -13,7 +13,7 @@ var myStepDefinitionsWrapper = function () {
   });
 
   this.Given(/^There are no UAVs connected$/, function(callback) {
-      var nUAVs = this.browser.evaluate("document.uavs.getNumUAVs()");
+      var nUAVs = this.evaluate("window.uavs.getNumUAVs()");
       if (nUAVs === 0) {
           callback();
       } else {
