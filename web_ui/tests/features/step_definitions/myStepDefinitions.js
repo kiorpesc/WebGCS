@@ -1,7 +1,7 @@
 var myStepDefinitionsWrapper = function () {
   this.World = require("../support/world.js").World; // overwrite default World constructor
 
-  this.Given(/^I am on the Cucumber.js GitHub repository$/, function(callback) {
+  this.Given(/^I am viewing the app$/, function(callback) {
     // Express the regexp above with the code you wish you had.
     // `this` is set to a new this.World instance.
     // i.e. you may use this.browser to execute the step:
@@ -12,6 +12,15 @@ var myStepDefinitionsWrapper = function () {
     // be executed by Cucumber.
   });
 
+  this.Given(/^There are no UAVs connected$/, function(callback) {
+      var nUAVs = this.browser.evaluate("document.uavs.getNumUAVs()");
+      if (nUAVs === 0) {
+          callback();
+      } else {
+          callback.fail(new Error("Number of UAVs is not 0"));
+      }
+  });
+    
   this.When(/^I go to the README file$/, function(callback) {
     // Express the regexp above with the code you wish you had. Call callback() at the end
     // of the step, or callback.pending() if the step is not yet implemented:
