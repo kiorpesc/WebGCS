@@ -1,6 +1,6 @@
 var myStepDefinitionsWrapper = function () {
   this.World = require("../support/world.js").World; // overwrite default World constructor
-  this.browser = this.World.browser;
+  var browser = this.World.browser;
     
   var assert = require('assert');
     
@@ -9,7 +9,7 @@ var myStepDefinitionsWrapper = function () {
     // `this` is set to a new this.World instance.
     // i.e. you may use this.browser to execute the step:
 
-      this.visit('http://fly.quadworkshop.com', callback);
+      browser.visit('http://fly.quadworkshop.com', callback);
 
     // The callback is passed to visit() so that when the job's finished, the next step can
     // be executed by Cucumber.
@@ -41,7 +41,6 @@ var myStepDefinitionsWrapper = function () {
   });  
   
   this.Given(/^I connect a single UAV$/, function(callback) {
-      var browser = this.browser;
       this.clickLink("#add-uav-link", function() {
           browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
       })
@@ -60,3 +59,4 @@ var myStepDefinitionsWrapper = function () {
 };
 
 module.exports = myStepDefinitionsWrapper;
+ = myStepDefinitionsWrapper;
