@@ -6,7 +6,7 @@ var myStepDefinitionsWrapper = function () {
     // `this` is set to a new this.World instance.
     // i.e. you may use this.browser to execute the step:
 
-      this.visit('http://github.com/cucumber/cucumber-js', callback);
+      this.visit('http://fly.quadworkshop.com', callback);
 
     // The callback is passed to visit() so that when the job's finished, the next step can
     // be executed by Cucumber.
