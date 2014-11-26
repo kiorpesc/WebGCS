@@ -41,7 +41,7 @@ var myStepDefinitionsWrapper = function () {
   
   this.Given(/^I connect a single UAV$/, function(callback) {
       this.clickLink("#add-uav-link", function() {
-          this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
+          browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
       })
   });  
     
