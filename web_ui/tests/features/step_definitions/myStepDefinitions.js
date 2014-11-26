@@ -17,15 +17,14 @@ var myStepDefinitionsWrapper = function () {
       if (nUAVs === 0) {
           callback();
       } else {
-          callback.fail(new Error("Number of UAVs is not 0"));
+          callback.fail(new Error("Number of UAVs - Expected: 0, Actual: " + nUAVs));
       }
   });
     
-  this.When(/^I go to the README file$/, function(callback) {
+  this.When(/^I click the Flight Modes button$/, function(callback) {
     // Express the regexp above with the code you wish you had. Call callback() at the end
     // of the step, or callback.pending() if the step is not yet implemented:
-
-    callback.pending();
+    this.browser.clickLink("Flight Modes", callback);
   });
 
   this.Then(/^I should see "(.*)" as the page title$/, function(title, callback) {
