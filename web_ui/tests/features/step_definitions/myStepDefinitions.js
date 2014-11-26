@@ -38,6 +38,12 @@ var myStepDefinitionsWrapper = function () {
           callback.fail(new Error("Flight mode div not empty."));
       }
   });  
+  
+  this.Given(/^I connect a single UAV$/, function(callback) {
+      this.clickLink("#add-uav-link", function() {
+          this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav", callback);
+      })
+  });  
     
   this.Then(/^I should see "(.*)" as the page title$/, function(title, callback) {
     // matching groups are passed as parameters to the step definition

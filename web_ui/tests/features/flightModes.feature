@@ -19,7 +19,7 @@ Scenario: Multiple UAVs connected
     Given I am viewing the app
     And I connect multiple UAVs
     When I click the Flight Modes button
-    Then I should see the available flight modes for the current UAVs
+    Then I should see the available flight modes for the current UAV
     
     
 Feature: Set Flight Modes

@@ -3,6 +3,7 @@ var WorldConstructor = function WorldConstructor(callback) {
   this.browser = new zombie(); // this.browser will be available in step definitions
 
   var world = {
+    browser: this.browser.bind(this),
     visit: function(url, callback) {
       this.browser.visit(url, callback);
     }.bind(this),
