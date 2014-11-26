@@ -1,6 +1,8 @@
 var myStepDefinitionsWrapper = function () {
   this.World = require("../support/world.js").World; // overwrite default World constructor
 
+  var assert = require('assert');
+    
   this.Given(/^I am viewing the app$/, function(callback) {
     // Express the regexp above with the code you wish you had.
     // `this` is set to a new this.World instance.
@@ -22,11 +24,21 @@ var myStepDefinitionsWrapper = function () {
   });
     
   this.When(/^I click the Flight Modes button$/, function(callback) {
-    // Express the regexp above with the code you wish you had. Call callback() at the end
-    // of the step, or callback.pending() if the step is not yet implemented:
-    this.clickLink("#flight-mode-link", callback);
+      // Express the regexp above with the code you wish you had. Call callback() at the end
+      // of the step, or callback.pending() if the step is not yet implemented:
+      this.clickLink("#flight-mode-link", callback);
   });
 
+  this.Then(/^I should not see any flight modes$/, function(callback) {
+      var modes = this.html("#flight-modes");
+  
+      if (modes === ""){
+          callback();
+      } else {
+          callback.fail(new Error("Flight mode div not empty."));
+      }
+  });  
+    
   this.Then(/^I should see "(.*)" as the page title$/, function(title, callback) {
     // matching groups are passed as parameters to the step definition
 
