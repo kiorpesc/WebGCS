@@ -24,7 +24,7 @@ var myStepDefinitionsWrapper = function () {
   this.When(/^I click the Flight Modes button$/, function(callback) {
     // Express the regexp above with the code you wish you had. Call callback() at the end
     // of the step, or callback.pending() if the step is not yet implemented:
-    this.clickLink("Flight Mode", callback);
+    this.clickLink("#flight-mode-link", callback);
   });
 
   this.Then(/^I should see "(.*)" as the page title$/, function(title, callback) {
