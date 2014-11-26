@@ -48,4 +48,4 @@ var centerMap = function(){
     }
 }
 
-google.maps.event.addDomListener(window, 'load', initializeMap);
+//google.maps.event.addDomListener(window, 'load', initializeMap);
