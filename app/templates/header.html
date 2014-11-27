@@ -1,0 +1,32 @@
+<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+  <div class="container navbar-left" id="topnav">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">WebGC</a>
+    </div>
+    <div class="nav">
+      <ul class="nav navbar-nav" ng-controller="NavBarCtrl as navctl">
+        <li ng-class="{ active: nav.isSet(1) }">
+          <a ng-click="navctl.setTab(1)">Flight</a>
+        </li>
+        <li ng-class="{ active: nav.isSet(2) }">
+          <a ng-click="navctl.setTab(2)">Mission</a>
+        </li>
+        <li ng-class="{ active: nav.isSet(3) }">
+          <a ng-click="navctl.setTab(3)">HUD</a>
+        </li>
+      </ul>
+      <div id="status_text">
+      <!-- STATUSTEXT messages will appear here -->
+      </div>
+
+      <div class="nav navbar-right" id="current_uavs" ng-controller="UAVListCtrl as uavs">
+        <ul class="nav navbar-nav" id="current_uavs_ul">
+          <li ng-repeat="uav in uavs.list"></li>
+          <!--
+          The tabs for the available UAVs will appear here
+          -->
+        </ul>
+      </div>
+    </div><!-- /.nav -->
+  </div><!-- /.container -->
+</div><!-- /.navbar -->
