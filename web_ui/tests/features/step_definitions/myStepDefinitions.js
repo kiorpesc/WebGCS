@@ -43,9 +43,11 @@ var myStepDefinitionsWrapper = function () {
   this.Given(/^I connect a single UAV$/, function(callback) {
       var browser = this.browser;
 
+      this.browser.fill("#uav_ip", "sw-testing").then(this.browser.clickButton("#submit-uav"));
+      
       var nUAVs = this.browser.evaluate("window.uavs.getNumUAVs()");
 
-      assert.equal(nUAVs, 0);
+      assert.equal(nUAVs, 1);
       callback.pending();
   });  
     
