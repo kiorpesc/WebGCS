@@ -4,7 +4,7 @@ var WorldConstructor = function WorldConstructor(callback) {
 
   var world = {
     browser: this.browser,
-    visit: function(url, callback) {
+/*    visit: function(url, callback) {
       this.browser.visit(url, callback);
     }.bind(this),
     evaluate: function(js_str) {
@@ -16,6 +16,7 @@ var WorldConstructor = function WorldConstructor(callback) {
     html: function(selector, context) {
         return this.browser.html(selector, context);
     }.bind(this),
+*/
   };
 
   callback(world); // tell Cucumber we're finished and to use our world object instead of 'this'
