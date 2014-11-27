@@ -28,7 +28,7 @@ var getCurrentLatLng = function () {
     return new google.maps.LatLng(uavs.getCurrentUAV().getLatitude(), uavs.getCurrentUAV().getLongitude());
 }
 
-// update the position of the marker every two seconds based on the current UAV 
+// update the position of the marker every two seconds based on the current UAV
 var updatePosition = function(){
   window.debug_counter += 1;
   if (uavs.getCurrentUAVId() !== -1){
@@ -48,4 +48,4 @@ var centerMap = function(){
     }
 }
 
-google.maps.event.addDomListener(window, 'load', initializeMap);
+//google.maps.event.addDomListener(window, 'load', initializeMap);

@@ -19,9 +19,9 @@
       <!-- STATUSTEXT messages will appear here -->
       </div>
 
-      <div class="nav navbar-right" id="current_uavs" ng-controller="UAVListCtrl as uavs">
+      <div class="nav navbar-right" id="current_uavs" ng-controller="UAVListCtrl as uavlist">
         <ul class="nav navbar-nav" id="current_uavs_ul">
-          <li ng-repeat="uav in uavs.list"></li>
+          <li ng-repeat="uav in uavlist.uavs"></li>
           <!--
           The tabs for the available UAVs will appear here
           -->

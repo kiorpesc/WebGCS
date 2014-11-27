@@ -5,14 +5,41 @@
 * Time: 08:12 PM
 * To change this template use Tools | Templates.
 */
+describe('WebGCSControllers', function() {
 
-describe('UAVListCtrl unit tests', function () {
-    beforeEach(module('WebGCS'));
-    
-    it('should be initialized with 0 uavs', inject(function($controller) {
-        var scope = {},
-            ctrl = $controller('UAVListCtrl', {$scope:scope});
+  beforeEach(function(){
+    this.addMatchers({
+      toEqualData: function(expected) {
+        return angular.equals(this.actual, expected);
+      }
+    });
+  });
 
-        expect(scope.uavs.getNumUAVs()).toBe(0);      
+
+  beforeEach(module('WebGCS'));
+  beforeEach(module('WebGCSControllers'));
+
+  describe('UAVListCtrl', function () {
+
+    beforeEach(module('WebGCSControllers'));
+
+    it('should be initialized with 0 uavs.', inject(function($controller) {
+        var scope = {};
+        var ctrl = $controller('UAVListCtrl', { $scope : scope });
+        expect(ctrl.uavs.length).toBe(0);
     }));
+
+    it('should not set its current_uav to a nonexistant id.', inject(function($controller) {
+        var scope = {};
+        var ctrl = $controller('UAVListCtrl', { $scope : scope });
+        ctrl.setCurrentUAV(2);
+        expect(ctrl.current_uav).toBe(-1);
+    }));
+
+    
+
+    // more unit tests
+  });
+
+
 });
