@@ -54,8 +54,8 @@ UAVList.prototype.addUAV = function(ws) {
     var id = this.uavs.length;
     this.uavs[id] = new UAV(ws, id);
     this.setCurrentUAV(id);
-    console.log(id);
-    console.log(uavs);
+    //console.log(id);
+    //console.log(uavs);
 }
 
 UAVList.prototype.addUAVLink = function (ip_port_string) {
