@@ -46,6 +46,8 @@ var myStepDefinitionsWrapper = function () {
 
       console.log(this.browser.location.toString());
       
+      console.log(this.browser.window.uavs);
+      
       var nUAVs = this.browser.evaluate("uavs.getNumUAVs()");
       
       assert.equal(nUAVs, 1);
