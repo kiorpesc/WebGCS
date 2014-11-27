@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="WebGCS">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,6 +11,14 @@
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB9QrUFbd68O-tYZTEkRdgeqizBa30lxc&sensor=false">
     </script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <script type="application/javascript" src="script/app.js">
+    </script>
+    <script type="application/javascript" src="script/controllers.js">
+    </script>
+    <script type="application/javascript" src="script/services.js">
+    </script>
+    <!--
     <script type="application/javascript" src="script/UAV.js">
     </script>
     <script type="application/javascript" src="script/mocks/WebMocket.js">
@@ -21,6 +29,7 @@
     </script>
     <script type="application/javascript" src="script/archetype.js">
     </script>
+    -->
     <script type="application/javascript" src="script/map_logic.js">
     </script>
     <script type="application/javascript" src="script/HUD_Animation.js">
@@ -45,38 +54,12 @@
 
   <body onload="canvas_draw();">
     <div class="wrapper">
-      <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-        <div class="container navbar-left" id="topnav">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">WebGC</a>
-          </div>
-          <div class="nav">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Flight</a></li>
-              <li><a href="#about">Mission</a></li>
-              <li><a href="#contact">HUD</a></li>
-            </ul>
-            <div id="status_text">
-            <!-- STATUSTEXT messages will appear here -->
-            </div>
-        
-            <div class="nav navbar-right" id="current_uavs">
-              <ul class="nav navbar-nav" id="current_uavs_ul">
-                <!--
-                The tabs for the available UAVs will appear here
-                -->
-              </ul>
-            </div>
-          </div><!-- /.nav-collapse -->
-        </div><!-- /.container -->
-      </div><!-- /.navbar -->
+      <div ng-include src="'templates/header.html'"></div>
 
- 
-   
       <div class="container" id="main_area" style="margin-left: 0px;">
         <div class="col-sm-12" id="content-nopad">
           <div class="col-sm-3 sidebar" id="sidebar" role="navigation">
- 
+
             <div class="list-group" id="left_controls">
               <div class="list-group-item" id="hud_display">
                 <canvas id="hud_canvas" height="210" width="280" style="z-index: 10">Sorry, your browser does not support canvas.</canvas>
@@ -90,8 +73,9 @@
                 Flight Mode
               </a>
               <div class="collapse" id="flight_modes">
+                <a ng-repeat="mode in modes" href="#" class="list-group-item" ng-click="">{{mode}}</a>
                 <!--
-                Flight modes will be loaded here by JavaScript when a UAV connects.
+                Flight modes will be loaded here by AngularJS when a UAV connects.
                 -->
               </div>
               <a onclick="centerMap();" href="#" class="list-group-item">Center Map</a>
@@ -108,45 +92,17 @@
               <a onclick="removeUAVById(current_uav);" href="#" class="list-group-item">Disconnect Current UAV</a>
               <div class="list-group-item" style="height: 100%">
               </div>
-            </div>  
+            </div>
           </div>
         </div><!--/content-nopad-->
       </div><!-- container -->
-        
+
       <div class="row" id="content-nopad">
         <div class="col-sm-12" id="content-nopad">
-          <div class="col-sm-2" id="parameters">
+          <div class="col-sm-2" id="parameters" ng-repeat="param in params">
             <table>
             <tr>
-              <td>Latitude:</td><td id="lat">{VAL}</td>
-            </tr>
-            </table>
-          </div>
-          <div class="col-sm-2" id="parameters">
-            <table>
-            <tr>
-              <td>Longitude:</td><td id="lon">{VAL}</td>
-            </tr>
-            </table>
-          </div>
-          <div class="col-sm-2" id="parameters">
-            <table>
-            <tr>
-              <td>Altitude:</td><td id="alt">{VAL}</td>
-            </tr>
-            </table>
-          </div>
-          <div class="col-sm-2" id="parameters">
-            <table>
-            <tr>
-              <td>Heading:</td><td id="heading">{VAL}</td>
-            </tr>
-            </table>
-          </div>
-          <div class="col-sm-2" id="parameters">
-            <table>
-            <tr>
-              <td>Airspeed:</td><td id="airspeed">{VAL}</td>
+              <td>{{param.name}}</td><td>{{param.value}}</td>
             </tr>
             </table>
           </div>
@@ -162,11 +118,14 @@
     </div><!--/#map_canvas-->
 
 
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="script/jquery-2.0.3.min.js"></script>
-    <script src="dist/js/bootstrap.js"></script>
-    <!-- <script src="offcanvas.js"></script> -->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- <script src="script/jquery-2.0.3.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <!-- <script src="dist/js/bootstrap.js"></script>
+    <script src="offcanvas.js"></script> -->
   </body>
 </html>
