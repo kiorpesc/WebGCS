@@ -42,14 +42,12 @@ var myStepDefinitionsWrapper = function () {
  
   
   this.Given(/^I connect a single UAV$/, function(callback) {
-      console.log(this.browser.window.uavs);
-
-      // right now this causes zombie to lose window context
       this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav");
 
-      console.log(this.browser.location.toString());
-
-      callback.pending();
+      var nUAVs = this.browser.evaluate("window.uavs.getNumUAVs()");
+      
+      assert.equal(nUAVs, 1);
+      callback();
   });  
     
   this.Then(/^I should see "(.*)" as the page title$/, function(title, callback) {
@@ -62,6 +60,57 @@ var myStepDefinitionsWrapper = function () {
       callback.fail(new Error("Expected to be on page with title " + title));
     }
   });
+
+    this.Then(/^I should see the available flight modes for the current UAV$/, function (callback) {                                                            
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                            
+                                                                              
+    this.Given(/^I connect multiple UAVs$/, function (callback) {                 
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });      
+    
+    this.When(/^I click one of the mode buttons$/, function (callback) {          
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.Then(/^the mode change message should be sent to the UAV$/, function (callback) {                                                                      
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.Then(/^the mode change message should be sent to the correct UAV$/, function (callback) {                                                              
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.Given(/^I connect any number of UAVs$/, function (callback) {            
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.When(/^the mode is accepted by the UAV$/, function (callback) {          
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.Then(/^the displayed mode should update to the new mode$/, function (callback) {                                                                       
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.When(/^the mode is rejected by the UAV$/, function (callback) {          
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending();                                                         
+    });                                                                           
+                                                                              
+    this.Then(/^the displayed mode should not change$/, function (callback) {     
+        // Write code here that turns the phrase above into concrete actions        
+        callback.pending(); 
+    });
 };
 
 module.exports = myStepDefinitionsWrapper;
+
