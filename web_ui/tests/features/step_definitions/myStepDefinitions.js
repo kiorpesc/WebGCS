@@ -47,6 +47,8 @@ var myStepDefinitionsWrapper = function () {
       // right now this causes zombie to lose window context
       this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav");
 
+      console.log(this.browser.location.toString());
+
       callback.pending();
   });  
     
