@@ -8,7 +8,7 @@ var myStepDefinitionsWrapper = function () {
     // Express the regexp above with the code you wish you had.
     // `this` is set to a new this.World instance.
     // i.e. you may use this.browser to execute the step:
-      this.browser.close();
+      //this.browser.close();
       this.browser.visit('http://fly.quadworkshop.com', callback);
 
     // The callback is passed to visit() so that when the job's finished, the next step can
@@ -39,11 +39,17 @@ var myStepDefinitionsWrapper = function () {
           callback.fail(new Error("Flight mode div not empty."));
       }
   });  
-  
+ 
+  this.addedOneUAV = function() {
+    return this.browser.evaluate("window.uavs.getNumUAVs()") === 1;
+  }
+ 
   this.Given(/^I connect a single UAV$/, function(callback) {
-      var browser = this.browser;
+      console.log(this.browser.window.uavs);
 
-      this.browser.fill("#uav_ip", "sw-testing").then(this.browser.clickButton("#submit-uav"));
+      this.browser.fill("#uav_ip", "sw-testing").pressButton("#submit-uav");
+
+      this.browser.wait(this.addedOneUAV, function() {console.log(this.browser.window)});
       
       var nUAVs = this.browser.evaluate("window.uavs.getNumUAVs()");
 
