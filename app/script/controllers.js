@@ -1,6 +1,6 @@
 'use strict';
 
-var WebGCSControllers = angular.module('WebGCSControllers', []);
+var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap']);
 
 WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope, UAVFactory){
     $scope.uavs = [];
@@ -153,6 +153,7 @@ WebGCSControllers.controller('HUDCtrl', [ '$scope', function($scope){
 
 }]);
 
-WebGCSControllers.controller('MapCtrl', [ '$scope', 'uiGmapgoogle-maps', function($scope){
+
+WebGCSControllers.controller('MapCtrl', [ '$scope', function($scope){
 
 }]);

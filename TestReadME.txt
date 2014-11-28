@@ -1,21 +1,16 @@
 To prepare testing framework, RUN
 
-npm install -g protractor # with sudo if necessary
+npm test
 
-webdriver-manager update # with sudo if necessary
+This will check that npm install and bower install have been run.
 
-To start the selenium web dirver
-webdriver-manager start
-
-## 
-This will start up a Selenium Server and will output a bunch of info logs. Your Protractor test will send requests to this server to control a local browser. You can see information about the status of the server at http://localhost:4444/wd/hub.
+It will then launch the Karma server, which will automatically
+run tests as the watched files change.
 
 
-Smaple test is in the web_ui/spec/todo-spec.js
+To run web tests (known as end-to-end tests):
+npm start
+in a new tab, type:
+npm run protractor
 
-Protractor requires an conf.js file and Spec files.
-To execute the test suite, 
-
-protractor conf.js
-
-There can be an arbitrary number of conf.js (in different file names)
+The tests will be run.
