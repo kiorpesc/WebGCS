@@ -12,7 +12,6 @@ describe('WebGCSServices', function() {
 
     it('should return an empty response if an invalid string is sent', function(){
       var response = mav_service.handleMAVLink("bogus");
-      console.log(response);
       expect(response).toBe("");
     });
 

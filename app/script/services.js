@@ -10,13 +10,8 @@ WebGCSServices.service('MAVLinkService', function() {
     } catch (e){
       return "";
     }
-    console.log("IN MAVLINKHANDLER");
-    console.log(uavs);
 
-    var response = {
-      params : {},
-      flight_modes : [],
-    }
+    var response = {};
 
     if(!msg_json.hasOwnProperty('mavpackettype')){
       if(msg_json[0] == 'STATUSTEXT'){
@@ -25,6 +20,7 @@ WebGCSServices.service('MAVLinkService', function() {
         response.flight_modes = msg_json;
       }
     } else {
+      response.params = {};
       switch(msg_json.mavpackettype)
       {
           case 'VFR_HUD':
@@ -98,6 +94,9 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService)
   UAV.prototype.connect = function(ws, id) {
       this.socket = ws;
       this.id = id;
+
+      // add websocket logic here?
+
   };
   UAV.prototype.isArmed = function() {
       return this.params.armed;
@@ -111,8 +110,17 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService)
   UAV.prototype.disarm = function() {
       this.sendCommand('DISARM');
   };
-
-  UAV.prototype.handleMessage = MAVLinkService.handleMAVLink;
+  UAV.prototype.handleMessage = function(msg) {
+    var response = MAVLinkService.handleMAVLink(msg);
+    if (response.hasOwnProperty('flight_modes')) {
+      this.flight_modes = response.flight_modes;
+    }
+    if (response.hasOwnProperty('params')){
+      for (var param in response.params){
+        this[param] = response[param];
+      }
+    }
+  }
 
   return UAV;
 }]);
