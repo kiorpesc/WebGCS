@@ -8,14 +8,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB9QrUFbd68O-tYZTEkRdgeqizBa30lxc&sensor=false">
-    </script>
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/lodash.js"></script>
+    <script src="bower_components/angular-google-maps.js"></script>
+
 
     <script type="application/javascript" src="script/app.js">
     </script>
@@ -37,8 +37,9 @@
     -->
     <script type="application/javascript" src="script/map_logic.js">
     </script>
+    <!--
     <script type="application/javascript" src="script/HUD_Animation.js">
-    </script>
+    </script> -->
     <title>WebGC</title>
 
     <!-- Bootstrap core CSS -->
@@ -55,11 +56,15 @@
     <![endif]-->
   </head>
 
+  <script type="application/javascript">
+  var canvas_draw = function() { };
+  </script>
+
   <body onload="canvas_draw();" ng-controller="UAVListCtrl as uavlist">
     <div class="wrapper">
       <div ng-include src="'templates/header.html'"></div>
 
-      <div class="container" id="main_area" style="margin-left: 0px;" ng-controller="UAVCtrl as uav">
+      <div class="container" id="main_area" style="margin-left: 0px;">
         <div class="col-sm-12" id="content-nopad">
           <div class="col-sm-3 sidebar" id="sidebar" role="navigation">
 
@@ -84,12 +89,12 @@
               <a onclick="centerMap();" href="#" class="list-group-item">Center Map</a>
               <a href="#collapseNEW" data-toggle="collapse" data-target="#new_uav" class="list-group-item">Add UAV</a>
               <div class="collapse on" id="new_uav">
-                <form action="javascript:uavs.addUAVLink(document.getElementById('uav_ip').value);" role="form" style="background-color: #ffffff">
+                <form role="form" style="background-color: #ffffff">
   		            <div class="form-group">
     		            <label for="uav_ip">Add a new UAV</label>
     		            <input class="form-control" id="uav_ip" placeholder="Enter IP:port of UAV server">
   		            </div>
-  		            <button type="submit" class="btn btn-default">Submit</button>
+  		            <button ng-click="addUAV(document.getElementById('uav_ip').value);" type="submit" class="btn btn-default">Submit</button>
                 </form>
               </div>
               <a onclick="removeUAVById(current_uav);" href="#" class="list-group-item">Disconnect Current UAV</a>
@@ -117,7 +122,9 @@
         <p>&copy; Charles Kiorpes 2014</p>
       </footer>
     </div>
-    <div id="map_canvas">
+
+    <div id="map_canvas" ng-controller="MapCtrl">
+      <ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
     </div><!--/#map_canvas-->
 
 
@@ -125,5 +132,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <!--
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDB9QrUFbd68O-tYZTEkRdgeqizBa30lxc&sensor=false&callback=initializeMap">
+    </script> -->
   </body>
 </html>

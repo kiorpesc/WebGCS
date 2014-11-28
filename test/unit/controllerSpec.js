@@ -3,8 +3,10 @@
 * User: kiorpesc
 * Date: 2014-11-27
 * Time: 08:12 PM
-* To change this template use Tools | Templates.
+*
+* Unit tests for the app's controllers
 */
+
 describe('WebGCSControllers', function() {
 
   beforeEach(function(){
@@ -20,7 +22,7 @@ describe('WebGCSControllers', function() {
   //beforeEach(module('WebGCSControllers'));
 
   describe('UAVListCtrl', function () {
-    var $scope, ctrl;
+    var $scope, ctrl, $log;
     beforeEach(function() {
       module('WebGCS');
       module('WebGCSControllers');
@@ -57,13 +59,47 @@ describe('WebGCSControllers', function() {
     // more unit tests
     it('should add a new UAV of id 0 when addUAV() is called for the first time', function() {
       var bogus_ws = { url : "nowhere" };
-      var new_uav = uav_fact;
+      //var new_uav = uav_fact;
       expect($scope.getNumUAVs()).toBe(0);
-      $scope.addUAV(new_uav, bogus_ws);
+      $scope.addUAV(bogus_ws);
       expect($scope.getCurrentUAVId()).toBe(0);
       expect($scope.uavs[0]).toBeDefined();
     });
+
+    it('should return false if isActiveUAV(0) is called before a UAV has been added', function() {
+      expect($scope.isActiveUAV(0)).toBe(false);
+    })
+
   });
 
+  describe('NavBarCtrl', function() {
+    var $scope, ctrl;
+    beforeEach(function(){
+      module('WebGCS');
+      module('WebGCSControllers');
+      inject(function($rootScope, $controller){
+        $scope = $rootScope.$new();
+        ctrl = $controller('NavBarCtrl', { $scope : $scope });
+      });
+    });
+
+    it('should be initialized with tab === 1', function() {
+      expect($scope.tab).toBe(1);
+    });
+
+    it('should be initialized such that isSet(1) is true', function() {
+      expect($scope.isSet(1)).toBe(true);
+    });
+
+    it('should return false if isSet() is called on an inactive tab', function() {
+      expect($scope.isSet(2)).toBe(false);
+    })
+
+    it('should set the current tab to 2 when setTab(2) is called.', function() {
+      $scope.setTab(2);
+      expect($scope.tab).toBe(2);
+    });
+
+  });
 
 });

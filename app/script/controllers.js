@@ -2,9 +2,13 @@
 
 var WebGCSControllers = angular.module('WebGCSControllers', []);
 
-WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope){
+WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope, UAVFactory){
     $scope.uavs = [];
     $scope.current_uav_id = -1;
+
+    $scope.isActiveUAV = function(id) {
+      return id === $scope.current_uav_id;
+    }
 
     $scope.getUAVById = function(id) {
       if ($scope.current_uav_id !== -1){
@@ -54,13 +58,15 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
       }
     };
 
-    $scope.addUAV = function(new_uav, ws) {
+    $scope.addUAV = function(ws) {
+      console.log("called addUAV()");
       var id = $scope.uavs.length;
+      var new_uav = new UAVFactory();
+      console.log(new_uav);
       new_uav.connect(ws, id);
       $scope.uavs[id] = new_uav;
       $scope.setCurrentUAV(id);
     };
-
 ////////////////////////////// SEPARATE THESE CONCERNS ////////////////////
     // this should be handled in UAV, not the list.
     // the list should be concerned with aggregating UAVs only
@@ -133,12 +139,20 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
 
 }]);
 
-WebGCSControllers.controller('NavBarCtrl', function(){
-  this.tab = 1;
-  this.setTab = function(t){
-    this.tab = t;
+WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){
+  $scope.tab = 1;
+  $scope.setTab = function(t){
+    $scope.tab = t;
   };
-  this.isSet = function(t){
-    return this.tab === t;
+  $scope.isSet = function(t){
+    return $scope.tab === t;
   };
-});
+}]);
+
+WebGCSControllers.controller('HUDCtrl', [ '$scope', function($scope){
+
+}]);
+
+WebGCSControllers.controller('MapCtrl', [ '$scope', 'uiGmapgoogle-maps', function($scope){
+
+}]);

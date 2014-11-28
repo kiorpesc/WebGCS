@@ -5,14 +5,14 @@
     </div>
     <div class="nav">
       <ul class="nav navbar-nav" ng-controller="NavBarCtrl as navctl">
-        <li ng-class="{ active: nav.isSet(1) }">
-          <a ng-click="navctl.setTab(1)">Flight</a>
+        <li ng-class="{ active: isSet(1) }">
+          <a ng-click="setTab(1)">Flight</a>
         </li>
-        <li ng-class="{ active: nav.isSet(2) }">
-          <a ng-click="navctl.setTab(2)">Mission</a>
+        <li ng-class="{ active: isSet(2) }">
+          <a ng-click="setTab(2)">Mission</a>
         </li>
-        <li ng-class="{ active: nav.isSet(3) }">
-          <a ng-click="navctl.setTab(3)">HUD</a>
+        <li ng-class="{ active: isSet(3) }">
+          <a ng-click="setTab(3)"> {{ navctl.tab }} HUD</a>
         </li>
       </ul>
       <div id="status_text">
@@ -21,7 +21,10 @@
 
       <div class="nav navbar-right" id="current_uavs">
         <ul class="nav navbar-nav" id="current_uavs_ul">
-          <li ng-repeat="uav in uavlist.uavs"></li>
+          <li ng-repeat="uav in uavs" id="uav{{uav.id}}" ng-class="{ active: isActiveUAV({{uav.id}}) }">
+            <a ng-click="setCurrentUAV(uav.id);">UAV {{ uav.id }}  <span class="badge" id="uav{{uav.id}}_badge">NO MODE</span>
+            </a>
+          </li>
           <!--
           The tabs for the available UAVs will appear here
           -->
