@@ -17,26 +17,39 @@ describe('WebGCSControllers', function() {
 
 
   beforeEach(module('WebGCS'));
-  beforeEach(module('WebGCSControllers'));
+  //beforeEach(module('WebGCSControllers'));
 
   describe('UAVListCtrl', function () {
-
-    beforeEach(module('WebGCSControllers'));
+    var $scope, ctrl;
+    beforeEach(function() {
+      module('WebGCS');
+      module('WebGCSControllers');
+      inject(function($rootScope, $controller) {
+        $scope = $rootScope.$new();
+        ctrl = $controller('UAVListCtrl', { $scope : $scope });
+      });
+    });
 
     it('should be initialized with 0 uavs.', inject(function($controller) {
-        var scope = {};
-        var ctrl = $controller('UAVListCtrl', { $scope : scope });
-        expect(ctrl.uavs.length).toBe(0);
+        //var scope = {};
+        //var ctrl = $controller('UAVListCtrl', { $scope : scope });
+        expect($scope.current_uav).toBeDefined();
+        //expect($scope.uavs.length).toBe(0);
     }));
 
     it('should not set its current_uav to a nonexistant id.', inject(function($controller) {
-        var scope = {};
-        var ctrl = $controller('UAVListCtrl', { $scope : scope });
-        ctrl.setCurrentUAV(2);
-        expect(ctrl.current_uav).toBe(-1);
+        //var scope = {};
+        //var ctrl = $controller('UAVListCtrl', { $scope : scope });
+        $scope.setCurrentUAV(2);
+        expect($scope.current_uav).toBe(-1);
     }));
 
-    
+    it('should return null when getCurrentUAV() is called when there are no UAVs', inject(function($controller) {
+        //var scope = {};
+        //var ctrl = $controller('UAVListCtrl', { $scope : scope });
+        var aUAV = $scope.getCurrentUAV();
+        expect(aUAV).toBe(null);
+    }));
 
     // more unit tests
   });
