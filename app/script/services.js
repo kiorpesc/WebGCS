@@ -5,7 +5,11 @@ var WebGCSServices = angular.module('WebGCSServices', ['ngResource']);
 WebGCSServices.service('MAVLinkService', function() {
   this.message_count = 0;
   this.handleMAVLink = function(msg, id) {
-    var msg_json = JSON.parse(msg);
+    try{
+      var msg_json = JSON.parse(msg);
+    } catch (e){
+      return "";
+    }
     console.log("IN MAVLINKHANDLER");
     console.log(uavs);
 
@@ -40,11 +44,9 @@ WebGCSServices.service('MAVLinkService', function() {
             break;
           case 'STATUSTEXT':
             // update UI somehow.
-            //document.getElementById('status_text').innerHTML = msg_json.text;
             throw new Error(msg_json.text);
             break;
           default:
-            //throw new Error(msg);
             break;
       }
     }
@@ -58,7 +60,7 @@ WebGCSServices.service('MAVLinkService', function() {
         //uav.setSystemState(msg_json.system_state);
         response.params.system_state = msg_json.system_state;
         //uav.setAutopilot(msg_json.autopilot);
-        respone.params.autopilot = msg_json.autopilot;
+        response.params.autopilot = msg_json.autopilot;
         /* UI Stuff
         updateUIFlightMode(uav);
         pulseUAV(uav);
@@ -69,7 +71,7 @@ WebGCSServices.service('MAVLinkService', function() {
 });
 
 // a factory might not really be needed here -- violates YAGNI
-WebGCSServices.factory('UAVFactory', function() {
+WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService) {
   function UAV(){
     this.socket = null,
     this.id = null,
@@ -113,4 +115,4 @@ WebGCSServices.factory('UAVFactory', function() {
   UAV.prototype.handleMessage = MAVLinkService.handleMAVLink;
 
   return UAV;
-});
+}]);
