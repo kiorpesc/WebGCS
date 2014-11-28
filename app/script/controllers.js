@@ -2,12 +2,12 @@
 
 var WebGCSControllers = angular.module('WebGCSControllers', []);
 
-WebGCSControllers.controller('UAVListCtrl', ['$scope', function($scope){
+WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope){
     $scope.uavs = [];
-    $scope.current_uav = -1;
+    $scope.current_uav_id = -1;
 
     $scope.getUAVById = function(id) {
-      if ($scope.current_uav !== -1){
+      if ($scope.current_uav_id !== -1){
         return $scope.uavs[id];
       } else {
         return null;
@@ -26,19 +26,19 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', function($scope){
     $scope.getUAVByWs = function(ws) {
       var id = $scope.getIdByWs(ws);
       if (id >= 0) {
-        return uavs[id];
+        return $scope.uavs[id];
       } else {
       // how to handle no object?
       }
     };
 
     $scope.getCurrentUAVId = function () {
-      return $scope.current_uav;
+      return $scope.current_uav_id;
     };
 
     $scope.getCurrentUAV = function () {
-      if($scope.current_uav !== -1) {
-        return $scope.uavs[$scope.current_uav];
+      if($scope.current_uav_id !== -1) {
+        return $scope.uavs[$scope.current_uav_id];
       } else {
         return null;
       }
@@ -50,18 +50,20 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', function($scope){
 
     $scope.setCurrentUAV = function(id) {
       if($scope.uavs.length > id){
-        $scope.current_uav = id;
+        $scope.current_uav_id = id;
       }
     };
 
-    $scope.addUAV = function(ws) {
+    $scope.addUAV = function(new_uav, ws) {
       var id = $scope.uavs.length;
-      $scope.uavs[id] = new UAV(ws, id);
+      new_uav.connect(ws, id);
+      $scope.uavs[id] = new_uav;
       $scope.setCurrentUAV(id);
-      console.log(id);
-      console.log(uavs);
     };
 
+////////////////////////////// SEPARATE THESE CONCERNS ////////////////////
+    // this should be handled in UAV, not the list.
+    // the list should be concerned with aggregating UAVs only
     $scope.addUAVLink = function (ip_port_string) {
       var ws;
       var ip_port = ip_port_string.split(":");
@@ -127,14 +129,144 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', function($scope){
         alert("Connection with UAV " + ws_id.toString() + "closed.");
       }
   };
+///////////////////////////////////////////////////////////////////////////////////////////
+
 }]);
 
 WebGCSControllers.controller('NavBarCtrl', function(){
-  $scope.tab = 1;
-  $scope.setTab = function(t){
-    $scope.tab = t;
+  this.tab = 1;
+  this.setTab = function(t){
+    this.tab = t;
   };
-  $scope.isSet = function(t){
-    return $scope.tab === t;
+  this.isSet = function(t){
+    return this.tab === t;
   };
 });
+
+WebGCSControllers.controller('UAVCtrl', function($scope) {
+  $scope.displayed_uav = $scope.getCurrentUAV();
+
+  $scope.params = {
+    socket: null,
+    id : null,
+    last_heartbeat : 0,
+    base_mode : 0,
+    custom_mode : 0,
+    flight_mode_string : "",
+    system_state : 0,
+    armed : false,
+    pitch : 0,
+    roll : 0,
+    yaw : 0,
+    lat : 0,
+    lon : 0,
+    alt : 0,
+    airspeed : 0,
+    autopilot : 0,
+    voltage : 0,
+    flight_modes : [],
+  }
+
+  $scope.getPitch = function () {
+      return $scope.params.pitch;
+  }
+
+  $scope.getRoll = function () {
+      return $scope.params.roll;
+  }
+
+  $scope.getYaw = function () {
+      return $scope.params.yaw;
+  }
+
+  $scope.getLatitude = function () {
+      return $scope.params.lat;
+  }
+
+  $scope.getLongitude = function () {
+      return $scope.params.lon;
+  }
+
+  $scope.getAltitude = function () {
+      return $scope.params.alt;
+  }
+
+  $scope.getAirspeed = function () {
+      return $scope.params.airspeed;
+  }
+
+  $scope.getVoltage = function () {
+      return $scope.params.voltage;
+  }
+
+  $scope.getFlightModes = function () {
+      return $scope.params.flight_modes;
+  }
+
+  $scope.setFlightModes = function (fms) {
+      $scope.params.flight_modes = fms;
+  }
+
+  $scope.setPitch = function (p) {
+      $scope.params.pitch = p;
+  }
+
+  $scope.setRoll = function (r) {
+      $scope.params.roll = r;
+  }
+
+  $scope.setLatitude = function (l) {
+      this.lat = l;
+  }
+
+  $scope.setLongitude = function (l) {
+      this.lon = l;
+  }
+
+  $scope.setBaseMode = function (mode) {
+      this.base_mode = mode;
+  }
+
+  $scope.setCustomMode = function (mode) {
+      this.custom_mode = mode;
+  }
+
+  $scope.setAutopilot = function (ap) {
+      this.autopilot = ap;
+  }
+
+  $scope.setSystemState = function (ss) {
+      this.system_state = ss;
+  }
+
+  $scope.setVoltage = function (v) {
+      this.voltage = v;
+  }
+
+  $scope.isArmed = function () {
+      return this.armed;
+  }
+
+  $scope.sendCommand = function (cmd_string) {
+      this.socket.send(cmd_string);
+  }
+
+  // arm the UAV
+  // we do not set the class variable here,
+  // because its state depends on MavLink
+  // messages (what if arm fails?)
+  $scope.arm = function () {
+      this.sendCommand('ARM');
+  }
+
+  // disarm the UAV
+  $scope.disarm = function() {
+      this.sendCommand('DISARM');
+  }
+});
+
+WebGCSControllers.controller('ParamCtrl', function($scope){
+
+});
+
+//WebGCSControllers.controller('')

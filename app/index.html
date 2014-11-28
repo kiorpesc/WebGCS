@@ -55,11 +55,11 @@
     <![endif]-->
   </head>
 
-  <body onload="canvas_draw();">
+  <body onload="canvas_draw();" ng-controller="UAVListCtrl as uavlist">
     <div class="wrapper">
       <div ng-include src="'templates/header.html'"></div>
 
-      <div class="container" id="main_area" style="margin-left: 0px;">
+      <div class="container" id="main_area" style="margin-left: 0px;" ng-controller="UAVCtrl as uav">
         <div class="col-sm-12" id="content-nopad">
           <div class="col-sm-3 sidebar" id="sidebar" role="navigation">
 
@@ -76,7 +76,7 @@
                 Flight Mode
               </a>
               <div class="collapse" id="flight_modes">
-                <a ng-repeat="mode in modes" href="#" class="list-group-item" ng-click="">{{mode}}</a>
+                <a ng-repeat="mode in uav.modes" href="#" class="list-group-item" ng-click="">{{mode}}</a>
                 <!--
                 Flight modes will be loaded here by AngularJS when a UAV connects.
                 -->
