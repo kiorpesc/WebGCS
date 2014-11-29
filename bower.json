@@ -13,6 +13,7 @@
     "angular-route": "1.3.x",
     "angular-resource": "1.3.x",
     "angular-animate": "1.3.x",
-    "ngmap" : "1.2.x"
+    "ngmap": "1.2.x",
+    "angular-websocket": "~0.0.5"
   }
 }
