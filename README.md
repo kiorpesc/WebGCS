@@ -1,32 +1,68 @@
 WebGCS
 ======
 
-Web-based MAVLink ground control based on Tornado and WebSockets
+branch: angular-port
 
-This interface is meant to work on tablets, laptops, and desktops.
+A reimplementation of WebGCS using AngularJS, and writing tests
+as development occurs.
 
 It offers a live view of any autopilot that supports
 standard MAVLink messages.
 
-Currently, it is only possible to watch the position and parameters
-of the craft.
+DONE:
+-----
+
+- Basic UI reimplementation
+- Controllers for UAVList, NavBar
+- UAV Provider, MAVLink service
+- Basic Google Maps
 
 TODO:
-	Add all submodules (dependencies)
-	Allow craft support to be added as modules (module for Ardupilot, module for PX4, etc)
-	Eliminate unnecessary CPU usage (will not need text console if commands can be handled from the web).
-	Enable sending commands to UAV from web browser (via craft-specific module)
+-----
+
+- Reimplement remaining functionality of old scripts:
+ - Websocket connection for each UAV
+ - Live UI changes based on messages received on the websocket
+- Reduce page into better templated sections for more modularity
+- End-to-end tests
 
 Installation:
 =============
 
-The backend requires Tornado and PyMAVLink to run.
-PyMAVLink can be installed via pip (pip install pymavlink).
+Clone the repository.
 
-Once these two libraries are installed, simply run the backend server
-on whichever computer is connected to your vehicle (can be serial,
-UDP, or TCP).
+Then:
+```
+npm install
+```
 
-        python webgcs_server.py -p <port> -m <mavlink device (ex: '/dev/ttyACM0')> -b <baud rate>
+This should download all the necessary packages.
 
-Once the server is running, open the index.html file in the web_ui folder on any machine and click "Add UAV."  Enter the address and port of the server (ex: localhost:8888) and Submit, and you should start seeing information from your vehicle on the website in realtime.
+To run the unit tests, run:
+```
+npm test
+```
+This will launch Karma and run tests using Chrome.
+
+To run the web tests, you need two terminal windows.
+
+In the first, run:
+```
+npm start
+```
+This will run the app on localhost:8000/app
+In the second, run
+```
+npm run protractor
+```
+This will run all web tests.
+
+Functionality:
+==============
+
+The app is supposed to:
+
+1. Connect to one or more UAVs via WebSockets.
+2. Show the status, location, and parameters of the UAV(s) in real time.
+3. Allow mode change commands to be send to the UAV(s).
+4. Allow disconnection from a UAV.
