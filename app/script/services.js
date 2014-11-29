@@ -5,6 +5,7 @@ var WebGCSServices = angular.module('WebGCSServices', ['ngResource']);
 WebGCSServices.service('MAVLinkService', function() {
   this.message_count = 0;
   this.handleMAVLink = function(msg, id) {
+    // ugly but effective try/catch for non-JSON strings
     try{
       var msg_json = JSON.parse(msg);
     } catch (e){
@@ -46,7 +47,6 @@ WebGCSServices.service('MAVLinkService', function() {
             break;
       }
     }
-
     // heartbeat is always processed.
     if (msg_json.mavpackettype === 'HEARTBEAT'){
         //uav.setBaseMode(msg_json.base_mode);
@@ -64,6 +64,9 @@ WebGCSServices.service('MAVLinkService', function() {
     }
     return response;
   }
+  this.translateFlightMode = function(base, custom) {
+    //put translation code here
+  };
 });
 
 // a factory might not really be needed here -- violates YAGNI
