@@ -68,7 +68,13 @@ describe('WebGCSControllers', function() {
 
     it('should return false if isActiveUAV(0) is called before a UAV has been added', function() {
       expect($scope.isActiveUAV(0)).toBe(false);
-    })
+    });
+
+    it('should not have addUAVLink() call addUAV() if WebSocket connection fails', function() {
+      $scope.current_url = "bogus";
+      $scope.addUAVLink();
+      expect($scope.getNumUAVs()).toBe(0);
+    });
 
   });
 
