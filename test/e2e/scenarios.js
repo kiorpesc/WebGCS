@@ -48,6 +48,10 @@ describe('WebGCS App', function() {
         expect(url.split('#')[1]).toBe('/phones/nexus-s');
       });
     });
+
+    it('should alert the user if the WebSocket conection fails', function() {
+      //
+    });
   });
 
 
