@@ -50,7 +50,18 @@ describe('WebGCS App', function() {
     });
 
     it('should alert the user if the WebSocket conection fails', function() {
-      //
+      var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
+      var submit_button = element(by.id('submit_uav'));
+
+      add_uav.click();
+
+      url_input.sendKeys("bogus");
+
+      submit_button.click();
+
+      driver.switchTo().alert().dismiss();
+      // if the alert is not there, it should throw an error
     });
   });
 
