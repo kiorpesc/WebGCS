@@ -10,6 +10,7 @@ module.exports = function(config){
       'app/bower_components/angular-animate/angular-animate.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
       'app/bower_components/ngmap/build/scripts/ng-map.min.js',
+      'app/bower_components/ng-websocket/ng-websocket.js',
       'app/script/**/*.js',
       'test/unit/**/*.js'
     ],

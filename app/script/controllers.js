@@ -59,6 +59,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
     };
 
     $scope.addUAV = function(ws) {
+      console.log(ws);
       var id = $scope.uavs.length;
       var new_uav = new UAVFactory();
       new_uav.connect(ws, id);
@@ -70,7 +71,10 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
     // the list should be concerned with aggregating UAVs only
     $scope.addUAVLink = function (ip_port_string) {
       var ws;
-      var ip_port = ip_port_string.split(":");
+        console.log(ip_port_string);
+      var ip_port = ip_port_string.split(":")
+
+
       var full_address = "ws://" + ip_port_string;
 
 
@@ -78,7 +82,12 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
         full_address += "/websocket";
         ws = new WebSocket(full_address);
       } else {
-        ws = new WebMocket(full_address);
+          if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_port_string))
+          {
+              ws = new WebMocket(full_address);
+          }else{
+              $window.alert("You have entered an invalid IP address!")
+          }
       }
       $scope.setUpWebSocket(ws, $scope);
 
@@ -92,8 +101,8 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
       // on websocket open, link the new socket to a new UAV
       // and switch focus to the new UAV
       ws.onopen = function () {
+          consol.log("ws on open triggered.");
         uavlist.addUAV(ws);
-
         // TODO: put UI functions inside of UI Namespace?
         //addUAVTabById(uavlist.getCurrentUAVId());
 
