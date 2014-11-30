@@ -25,7 +25,7 @@ describe('WebGCS App', function() {
     });
 
 
-    it('should be possible to add a UAV to the navbar', function() {
+    xit('should be possible to add a UAV to the navbar', function() {
 
       var add_uav = element(by.id("add_uav_link"));
       var submit_button = element(by.id('submit_uav'));
