@@ -5,6 +5,7 @@ var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap']);
 WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope, UAVFactory){
     $scope.uavs = [];
     $scope.current_uav_id = -1;
+    $scope.current_url = "";
 
     $scope.isActiveUAV = function(id) {
       return id === $scope.current_uav_id;
@@ -58,7 +59,8 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
       }
     };
 
-    $scope.addUAV = function(ws) {
+    $scope.addUAV = function() {
+      var ws = $scope.current_url;
       console.log(ws);
       var id = $scope.uavs.length;
       var new_uav = new UAVFactory();

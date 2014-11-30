@@ -90,9 +90,9 @@
                 <form role="form" style="background-color: #ffffff">
   		            <div class="form-group">
     		            <label for="uav_ip">Add a new UAV</label>
-    		            <input class="form-control" id="uav_ip" placeholder="Enter IP:port of UAV server">
+    		            <input class="form-control" id="uav_ip" placeholder="Enter IP:port of UAV server" ng-model="current_url">
   		            </div>
-  		            <button ng-click="addUAV(document.getElementById('uav_ip').value);" type="submit" id="submit_uav" class="btn btn-default">Submit</button>
+  		            <button ng-click="addUAV()" type="submit" id="submit_uav" class="btn btn-default">Submit</button>
                 </form>
               </div>
               <a onclick="removeUAVById(current_uav);" href="#" class="list-group-item">Disconnect Current UAV</a>
