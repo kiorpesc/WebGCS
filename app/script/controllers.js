@@ -59,8 +59,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
       }
     };
 
-    $scope.addUAV = function() {
-      var ws = $scope.current_url;
+    $scope.addUAV = function(ws) {
       console.log(ws);
       var id = $scope.uavs.length;
       var new_uav = new UAVFactory();
@@ -71,27 +70,26 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
 ////////////////////////////// SEPARATE THESE CONCERNS ////////////////////
     // this should be handled in UAV, not the list.
     // the list should be concerned with aggregating UAVs only
-    $scope.addUAVLink = function (ip_port_string) {
+    $scope.addUAVLink = function () {
       var ws;
-        console.log(ip_port_string);
+      var ip_port_string = $scope.current_url;;
+      console.log(ip_port_string);
       var ip_port = ip_port_string.split(":")
-
-
       var full_address = "ws://" + ip_port_string;
-
-
+      $scope.current_url = "";
       if (ip_port_string !== "sw-testing"){
         full_address += "/websocket";
-        ws = new WebSocket(full_address);
-      } else {
           if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_port_string))
           {
               ws = new WebMocket(full_address);
+              $scope.setUpWebSocket(ws, $scope);
           }else{
-              $window.alert("You have entered an invalid IP address!")
+              window.alert("You have entered an invalid IP address!")
           }
+
+      } else {
+            $scope.addUAV(ws);
       }
-      $scope.setUpWebSocket(ws, $scope);
 
       if(ip_port_string === "sw-testing") {
         ws.onopen();
