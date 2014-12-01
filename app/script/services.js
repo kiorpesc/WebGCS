@@ -69,7 +69,7 @@ WebGCSServices.service('MAVLinkService', function() {
   };
 });
 
-// a factory might not really be needed here -- violates YAGNI
+
 WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(MAVLinkService,$websocket) {
   function UAV(){
     this.socket = null,
@@ -94,17 +94,23 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
     },
     this.flight_modes = []
   }
-  UAV.prototype.connect = function(_url) {
-     console.log($websocket.$new({
-        url: _url,
-        mock:true
-    }));
-//      this.socket = ws;
-//      this.id = id;
+  UAV.prototype.connect = function(_url, id) {
+    var ws_config = {
+      url : _url,
+    };
 
-      // add websocket logic here?
+    if (_url === "sw-testing") {
+      ws_config.mock = true;
+    }
 
+    var ws = $websocket.$new(ws_config);
+
+    this.setUpSocket(ws, id);
+
+    this.socket = ws;
+    this.id = id;
   };
+
   UAV.prototype.isArmed = function() {
       return this.params.armed;
     };
@@ -127,6 +133,36 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
         this[param] = response[param];
       }
     }
+  }
+
+  UAV.prototype.setUpSocket = function(ws, id){
+    ws.$on('$open', function () {
+      console.log("ws on open triggered.");
+      // attach an id to the ws
+      ws.UAVid = id;
+    })
+    .$on('$error', function() {
+      var ws_id = ws.UAVid;
+
+      if(confirm("UAV " + ws_id.toString() + " connection error.  Attempt reconnect?")){
+        // reconnect
+      } else {
+        // remove UAV from UI
+        //removeUAVById(ws_id);
+        //ws.close();
+      }
+    })
+    .$on('$message', function(evt) {
+      var msg = evt.data;
+      var ws_id = ws.UAVid;   // might not be needed
+
+      var response = this.handleMessage(msg);
+      //TODO: parse response into appropriate locations
+    })
+    .$on('$close', function() {
+      var ws_id = ws.UAVid;
+      alert("Connection with UAV " + ws_id.toString() + "closed.");
+    });
   }
 
   return function() {

@@ -58,18 +58,20 @@ describe('WebGCSControllers', function() {
 
     // more unit tests
     it('should add a new UAV of id 0 when addUAV() is called for the first time', function() {
-      var bogus_ws = { url : "nowhere" };
+      var bogus_url = "sw-testing";
       //var new_uav = uav_fact;
       expect($scope.getNumUAVs()).toBe(0);
-      $scope.addUAV(bogus_ws);
+      $scope.addUAV(bogus_url);
       expect($scope.getCurrentUAVId()).toBe(0);
       expect($scope.uavs[0]).toBeDefined();
+      expect($scope.uavs[0].id).toBe(0);
     });
 
     it('should return false if isActiveUAV(0) is called before a UAV has been added', function() {
       expect($scope.isActiveUAV(0)).toBe(false);
     });
 
+    // this test will change when addUAVLink() doesn't exist anymore
     it('should not have addUAVLink() call addUAV() if WebSocket connection fails', function() {
       $scope.current_url = "bogus";
       $scope.addUAVLink();

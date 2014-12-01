@@ -99,4 +99,45 @@ describe('WebGCSServices', function() {
       expect(response.params.autopilot).toBe(12);
     });
   });
+
+  describe('UAVFactory', function() {
+    var mav_service, uav_factory, websocket;
+    beforeEach(function() {
+      module('ngWebsocket');
+      inject(function(_MAVLinkService_, _UAVFactory_, $websocket) {
+      mav_service = _MAVLinkService_;
+      uav_factory = _UAVFactory_;
+      websocket =  $websocket;
+    })});
+
+    it('- websocket variable should be defined in tests.', function() {
+      expect(websocket).toBeDefined();
+    });
+
+    it('should return a UAV object', function() {
+      var new_uav = uav_factory();
+      expect(new_uav).toBeDefined();
+      expect(angular.isObject(new_uav)).toBe(true);
+      expect(new_uav.params).toBeDefined();
+    });
+
+    it('should add a websocket when connect() is called with "sw-testing"', function() {
+      var new_uav = uav_factory();
+      new_uav.connect("sw-testing");
+      expect(new_uav.socket).toBeDefined();
+    });
+
+    it('should fail to add a websocket when connect() is called with an invalid IP', function() {
+      var new_uav = uav_factory();
+      expect(function() {new_uav.connect("not an ip address")}).toThrow();
+      expect(new_uav.socket).toBe(null);
+    });
+
+    it('should add the event handling functions to the websocket', function() {
+      var new_uav = uav_factory();
+      new_uav.connect("sw-testing", 0);
+
+    });
+
+  });
 })
