@@ -146,6 +146,7 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
   UAV.prototype.setUpSocket = function(ws, id){
     ws.$on('$open', function () {
       console.log("ws on open triggered.");
+      ws.$emit('$message', 'i triggered a message');
       // attach an id to the ws
       ws.UAVid = id;
     })
@@ -161,6 +162,7 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
       }
     })
     .$on('$message', function(evt) {
+      console.log('triggered onmessage');
       var msg = evt.data;
       var ws_id = ws.UAVid;   // might not be needed
 

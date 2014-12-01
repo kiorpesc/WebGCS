@@ -87,10 +87,10 @@
 
       <div class="row" id="content-nopad">
         <div class="col-sm-12" id="content-nopad">
-          <div class="col-sm-2" id="parameters" ng-repeat="param in getCurrentUAV().params">
+          <div class="col-sm-2" id="parameters" ng-repeat="(key, value) in getCurrentUAV().params">
             <table>
             <tr>
-              <td>{{param.name}}</td><td>{{param.value}}</td>
+              <td>{{ key }}: </td> <td> {{ value }}</td>
             </tr>
             </table>
           </div>
