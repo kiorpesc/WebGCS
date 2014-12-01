@@ -129,5 +129,7 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
     }
   }
 
-  return UAV;
+  return function() {
+    return new UAV();
+  };
 }]);
