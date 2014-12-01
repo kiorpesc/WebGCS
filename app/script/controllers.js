@@ -65,7 +65,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket'
       console.log(ws);
       var id = $scope.uavs.length;
       var new_uav = new UAVFactory();
-      new_uav.connect(ws);
+      new_uav.connect();
       $scope.uavs[id] = new_uav;
       $scope.setCurrentUAV(id);
     };
