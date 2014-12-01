@@ -94,13 +94,18 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
     },
     this.flight_modes = []
   }
+
   UAV.prototype.connect = function(_url, id) {
+    var retval = false;
     var ws_config = {
       url : _url,
+      reconnect : false,
     };
 
     if (_url === "sw-testing") {
       ws_config.mock = true;
+      ws_config.reconnect = true;
+      retval = true;
     }
 
     var ws = $websocket.$new(ws_config);
@@ -109,6 +114,9 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
 
     this.socket = ws;
     this.id = id;
+
+    return retval;
+
   };
 
   UAV.prototype.isArmed = function() {
@@ -162,6 +170,7 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
     .$on('$close', function() {
       var ws_id = ws.UAVid;
       alert("Connection with UAV " + ws_id.toString() + "closed.");
+
     });
   }
 

@@ -65,36 +65,29 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket'
       console.log(url);
       var id = $scope.uavs.length;
       var new_uav = UAVFactory();
-      new_uav.connect(url, id);
-      $scope.uavs[id] = new_uav;
-      $scope.setCurrentUAV(id);
+      if(new_uav.connect(url, id)){
+        $scope.uavs[id] = new_uav;
+        $scope.setCurrentUAV(id);
+      }
     };
 ////////////////////////////// SEPARATE THESE CONCERNS ////////////////////
     // this should be handled in UAV, not the list.
     // the list should be concerned with aggregating UAVs only
     $scope.addUAVLink = function () {
-      var ip_port_string = $scope.current_url;;
+      var ip_port_string = $scope.current_url;
+      if(ip_port_string !== "sw-testing"){
+        ip_port_string = "ws://" + ip_port_string;
+      }
       console.log(ip_port_string);
-      var full_address = "ws://" + ip_port_string;
       $scope.current_url = "";
 
-      if (ip_port_string !== "sw-testing"){
-        full_address += "/websocket";
-          if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_port_string))
-          {
-              $scope.addUAV(full_address);
-          }else{
-              window.alert("You have entered an invalid IP address!")
-          }
-
-      } else {
-            $scope.addUAV(ip_port_string);
+      try {
+        $scope.addUAV(ip_port_string);
+      } catch (err){
+        window.alert("Could not establish connection to the provided address.");
+        console.log(err.message);
       }
 
-      if(ip_port_string === "sw-testing") {
-        ws.onopen();
-        ws.beginTransmitting();
-      }
     };
 
     $scope.setUpWebSocket = function (ws, uavlist) {
@@ -146,7 +139,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket'
 
 }]);
 
-WebGCSControllers.controller('NavBarCtrl', [ '$scope','$websocket', function($scope, $websocket){
+WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){
 
   $scope.tab = 1;
   $scope.setTab = function(t){
@@ -155,17 +148,12 @@ WebGCSControllers.controller('NavBarCtrl', [ '$scope','$websocket', function($sc
   $scope.isSet = function(t){
     return $scope.tab === t;
   };
-//    console.log($websocket.$new({
-//        url: 'ws://localhost:12345',
-//        mock:true
-//    }));
-//    console.log(angular.isFunction($websocket));
 }]);
 
 WebGCSControllers.controller('HUDCtrl', [ '$scope', function($scope){
 
 }]);
 
-WebGCSControllers.controller('MapCtrl', [ '$scope', function($scope, $websocket){
+WebGCSControllers.controller('MapCtrl', [ '$scope', function($scope){
 
 }]);
