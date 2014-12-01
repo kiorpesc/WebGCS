@@ -94,9 +94,9 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
     },
     this.flight_modes = []
   }
-  UAV.prototype.connect = function() {
+  UAV.prototype.connect = function(_url) {
      console.log($websocket.$new({
-        url: 'ws://localhost:12345',
+        url: _url,
         mock:true
     }));
 //      this.socket = ws;
