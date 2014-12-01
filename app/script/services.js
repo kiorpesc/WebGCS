@@ -1,6 +1,6 @@
 'use strict';
 
-var WebGCSServices = angular.module('WebGCSServices', ['ngResource']);
+var WebGCSServices = angular.module('WebGCSServices', ['ngResource','ngWebsocket']);
 
 WebGCSServices.service('MAVLinkService', function() {
   this.message_count = 0;
@@ -70,7 +70,7 @@ WebGCSServices.service('MAVLinkService', function() {
 });
 
 // a factory might not really be needed here -- violates YAGNI
-WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService) {
+WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(MAVLinkService,$websocket) {
   function UAV(){
     this.socket = null,
     this.id = null,
@@ -94,9 +94,13 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService)
     },
     this.flight_modes = []
   }
-  UAV.prototype.connect = function(ws, id) {
-      this.socket = ws;
-      this.id = id;
+  UAV.prototype.connect = function(_url) {
+     console.log($websocket.$new({
+        url: _url,
+        mock:true
+    }));
+//      this.socket = ws;
+//      this.id = id;
 
       // add websocket logic here?
 

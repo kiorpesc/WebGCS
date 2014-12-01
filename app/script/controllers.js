@@ -1,9 +1,11 @@
 'use strict';
 
-var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap']);
+var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap','ngWebsocket']);
 
-WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($scope, UAVFactory){
+WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket', function($scope, UAVFactory,$websocket){
+    $scope.$websocket = $websocket;
     $scope.uavs = [];
+
     $scope.current_uav_id = -1;
     $scope.current_url = "";
 
@@ -59,11 +61,11 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
       }
     };
 
-    $scope.addUAV = function(ws) {
-      console.log(ws);
+    $scope.addUAV = function(url) {
+      console.log(url);
       var id = $scope.uavs.length;
       var new_uav = new UAVFactory();
-      new_uav.connect(ws, id);
+      new_uav.connect(url);
       $scope.uavs[id] = new_uav;
       $scope.setCurrentUAV(id);
     };
@@ -71,24 +73,22 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
     // this should be handled in UAV, not the list.
     // the list should be concerned with aggregating UAVs only
     $scope.addUAVLink = function () {
-      var ws;
       var ip_port_string = $scope.current_url;;
       console.log(ip_port_string);
-      var ip_port = ip_port_string.split(":")
       var full_address = "ws://" + ip_port_string;
       $scope.current_url = "";
+
       if (ip_port_string !== "sw-testing"){
         full_address += "/websocket";
           if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip_port_string))
           {
-              ws = new WebMocket(full_address);
-              $scope.setUpWebSocket(ws, $scope);
+              $scope.addUAV(full_address);
           }else{
               window.alert("You have entered an invalid IP address!")
           }
 
       } else {
-            $scope.addUAV(ws);
+            $scope.addUAV(ip_port_string);
       }
 
       if(ip_port_string === "sw-testing") {
@@ -146,7 +146,8 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', function($s
 
 }]);
 
-WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){
+WebGCSControllers.controller('NavBarCtrl', [ '$scope','$websocket', function($scope, $websocket){
+
   $scope.tab = 1;
   $scope.setTab = function(t){
     $scope.tab = t;
@@ -154,13 +155,17 @@ WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){
   $scope.isSet = function(t){
     return $scope.tab === t;
   };
+//    console.log($websocket.$new({
+//        url: 'ws://localhost:12345',
+//        mock:true
+//    }));
+//    console.log(angular.isFunction($websocket));
 }]);
 
 WebGCSControllers.controller('HUDCtrl', [ '$scope', function($scope){
 
 }]);
 
-
-WebGCSControllers.controller('MapCtrl', [ '$scope', function($scope){
+WebGCSControllers.controller('MapCtrl', [ '$scope', function($scope, $websocket){
 
 }]);
