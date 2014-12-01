@@ -130,28 +130,34 @@ describe('WebGCSServices', function() {
     });
 
     describe('WITH Websocket', function() {
-
+        var socketready = false;
       beforeEach(function(){
+          inject(function(){
         new_uav.id = 0;
         ws_instance = websocket.$new({ url:'sw-testing', mock: true });
         new_uav.socket = ws_instance;
         new_uav.setUpSocket(ws_instance, new_uav.id);
+        waitsFor(function(){
+                  return new_uav.socket.$status()== new_uav.socket.$OPEN;
+          })
+        })
+
       });
 
-    it('should add a websocket when connect() is called with "sw-testing"', function() {
+    it('should add a websocket when connect() is called with "sw-testing"', function(done) {
       var new_uav = uav_factory();
       new_uav.connect("sw-testing");
       expect(new_uav.socket).toBeDefined();
     });
 
 
-    xit('should add the event handling functions to the websocket', function() {
+    xit('should add the event handling functions to the websocket', function(done) {
       //var new_uav = uav_factory();
       new_uav.connect("sw-testing", 0);
 
     });
 
-    it('should send mavlink messages to the MAVLinkService', function() {
+    it('should send mavlink messages to the MAVLinkService', function(done) {
       var heartbeat = {
         mavpackettype : 'HEARTBEAT',
         base_mode : 0,
