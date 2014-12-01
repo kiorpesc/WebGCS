@@ -70,7 +70,7 @@ WebGCSServices.service('MAVLinkService', function() {
 });
 
 // a factory might not really be needed here -- violates YAGNI
-WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService) {
+WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(MAVLinkService,$websoket) {
   function UAV(){
     this.socket = null,
     this.id = null,
@@ -94,9 +94,13 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', function(MAVLinkService)
     },
     this.flight_modes = []
   }
-  UAV.prototype.connect = function(ws, id) {
-      this.socket = ws;
-      this.id = id;
+  UAV.prototype.connect = function($websocket) {
+     console.log($websocket.$new({
+        url: 'ws://localhost:12345',
+        mock:true
+    }));
+//      this.socket = ws;
+//      this.id = id;
 
       // add websocket logic here?
 
