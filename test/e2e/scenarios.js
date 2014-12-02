@@ -41,7 +41,7 @@ describe('WebGCS App', function() {
     });
 
 
-    it('should alert the user if the WebSocket conection fails', function() {
+    xit('should alert the user if the WebSocket conection fails', function() {
       var add_uav = element(by.id("add_uav_link"));
       var url_input = element(by.id("uav_ip"));
       var submit_button = element(by.id('submit_uav'));
@@ -57,6 +57,27 @@ describe('WebGCS App', function() {
     });
 
     it('should allow the user to remove the current UAV', function() {
+      var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
+      var submit_button = element(by.id('submit_uav'));
+
+      add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+
+      var uavs = element.all(by.repeater('uav in uavs'));
+
+      expect(uavs.count()).toBe(1);
+      add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+      uavs = element.all(by.repeater('uav in uavs'));
+      expect(uavs.count()).toBe(2);
+
+      var remove_button = element(by.id('disconnect_link'));
+      remove_button.click();
+      uavs = element.all(by.repeater('uav in uavs'));
+      expect(uavs.count()).toBe(1);
 
     })
 
