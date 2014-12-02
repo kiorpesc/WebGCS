@@ -71,6 +71,7 @@ WebGCSServices.service('MAVLinkService', function() {
 
 
 WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', function(MAVLinkService,$websocket) {
+
   function UAV(){
     this.socket = null;
     this.id = null;

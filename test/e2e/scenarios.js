@@ -88,6 +88,7 @@ describe('WebGCS App', function() {
       expect(uavs.count()).toBe(1);
 
     });
+    
     it('should not reload the page when user click arm and there is no uav', function(){
       browser.get('app/index.html#asasdas');
       browser.waitForAngular();

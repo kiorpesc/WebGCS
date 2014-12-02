@@ -156,6 +156,7 @@ describe('WebGCSServices', function() {
         new_uav.socket.generateHeartbeat();
         expect(new_uav.params.autopilot).toBe(12);
       });
+
     });
   });
 })
