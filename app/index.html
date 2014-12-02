@@ -66,7 +66,7 @@
                 Flight modes will be loaded here by AngularJS when a UAV connects.
                 -->
               </div>
-              <a onclick="centerMap();" href="#" class="list-group-item">Center Map</a>
+              <a ng-click="centerMap()" class="list-group-item" id="center_map_link">Center Map</a>
               <a href="#collapseNEW" data-toggle="collapse" data-target="#new_uav" class="list-group-item" id="add_uav_link">Add UAV</a>
               <div class="collapse on" id="new_uav">
                 <form role="form" style="background-color: #ffffff">

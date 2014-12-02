@@ -143,5 +143,6 @@ describe('WebGCS App', function() {
       arm_button.click();
       browser.getCurrentUrl().then(function(url){expect(url).toBe('http://localhost:8000/app/index.html#/asasdas' )});
     });
+
   });
 });
