@@ -52,7 +52,7 @@
               <div class="list-group-item" id="hud_display">
                 <canvas id="hud_canvas" height="210" width="280" style="z-index: 10">Sorry, your browser does not support canvas.</canvas>
               </div>
-              <a ng-click="getCurrentUAV().isArmed() ? getCurrentUAV().sendCommand('DISARM') : getCurrentUAV().sendCommand('ARM')" class="list-group-item">
+              <a id="arm_disarm_link" ng-click="getCurrentUAV().isArmed() ? getCurrentUAV().sendCommand('DISARM') : getCurrentUAV().sendCommand('ARM')" class="list-group-item">
                 <span class="badge" id="current_armed">{{ getCurrentUAV().isArmed() ? 'ARMED' : 'DISARMED' }}</span>
                 {{ getCurrentUAV().isArmed() ? 'Disarm' : 'Arm' }}
               </a>
