@@ -25,13 +25,14 @@ describe('WebGCS App', function() {
     });
 
 
-    xit('should be possible to add a UAV to the navbar', function() {
+    it('should be possible to add a UAV to the navbar', function() {
 
       var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
       var submit_button = element(by.id('submit_uav'));
 
       add_uav.click();
-
+      url_input.sendKeys("sw-testing");
       submit_button.click();
 
       var uavs = element.all(by.repeater('uav in uavs'));
@@ -54,5 +55,10 @@ describe('WebGCS App', function() {
       browser.switchTo().alert().dismiss();
       // if the alert is not there, it should throw an error
     });
+
+    it('should allow the user to remove the current UAV', function() {
+      
+    })
+
   });
 });

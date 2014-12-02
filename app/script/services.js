@@ -156,7 +156,8 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
       console.log("ws on open triggered.");
     }
     ws.onerror = function() {
-      console.log('WEBSOCKET ERROR hit')
+      console.log('WEBSOCKET ERROR hit');
+      window.alert("Connection to websocket encountered an error.");
     }
     ws.onmessage = function(evt) {
       console.log('triggered onmessage');
