@@ -16,6 +16,7 @@ describe('WebGCS App', function() {
 
     beforeEach(function() {
       browser.get('app/index.html');
+      browser.waitForAngular();
     });
 
 
@@ -87,6 +88,14 @@ describe('WebGCS App', function() {
       expect(uavs.count()).toBe(1);
 
     });
+    it('should not reload the page when user click arm and there is no uav', function(){
+      browser.get('app/index.html#asasdas');
+      browser.waitForAngular();
+      var arm_button = element(by.id("arm_disarm_link"));
+      arm_button.click();
+      browser.getCurrentUrl().then(function(url){expect(url).toBe('http://localhost:8000/app/index.html#/asasdas' )});
+    })
+
 
   });
 });
