@@ -117,5 +117,25 @@ describe('WebGCS App', function() {
 
     });
 
+    it(', when a new UAV is added, should display the information of that UAV', function(){
+      var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
+      var submit_button = element(by.id('submit_uav'));
+
+      add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+
+      var uavs = element.all(by.repeater('uav in uavs'));
+
+      expect(uavs.count()).toBe(1);
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+
+      var display_box = element(by.id("uavid_box"));
+      display_box.getText().then(function(text){expect(text).toBe('1')});
+
+    });
+
   });
 });
