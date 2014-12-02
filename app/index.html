@@ -62,9 +62,6 @@
               </a>
               <div class="collapse" id="flight_modes">
                 <a ng-repeat="mode in getCurrentUAV().flight_modes" class="list-group-item" ng-click="getCurrentUAV().sendCommand(mode)">{{mode}}</a>
-                <!--
-                Flight modes will be loaded here by AngularJS when a UAV connects.
-                -->
               </div>
               <a ng-click="centerMap()" class="list-group-item" id="center_map_link">Center Map</a>
               <a href="#collapseNEW" data-toggle="collapse" data-target="#new_uav" class="list-group-item" id="add_uav_link">Add UAV</a>

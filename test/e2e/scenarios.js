@@ -141,6 +141,7 @@ describe('WebGCS App', function() {
       display_box.getText().then(function(text){expect(text).toBe('1')});
 
     });
+
     it('should not reload the page when user click CenterMap and there is no uav', function(){
       browser.get('app/index.html#asasdas');
       browser.waitForAngular();
@@ -148,6 +149,24 @@ describe('WebGCS App', function() {
       arm_button.click();
       browser.getCurrentUrl().then(function(url){expect(url).toBe('http://localhost:8000/app/index.html#/asasdas' )});
     });
+
+    it('Flight Mode div should not contain any modes if there are no UAVs connected', function(){
+      var fm_link = element.all(by.repeater("mode in getCurrentUAV().flight_modes"));
+      expect(fm_link.count()).toBe(0);
+    });
+
+    it('Flight Mode div should contain modes when a UAV is connected', function(){
+      var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
+      var submit_button = element(by.id('submit_uav'));
+
+      add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+      
+      var fm_link = element.all(by.repeater("mode in getCurrentUAV().flight_modes"));
+      expect(fm_link.count()).toNotBe(0);
+    })
 
   });
 });
