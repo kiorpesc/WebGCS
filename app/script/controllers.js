@@ -63,7 +63,6 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocke
     };
 
     $scope.addUAV = function(url) {
-      console.log(url);
       var id = $scope.uavs.length;
       var new_uav = UAVFactory();
       if(new_uav.connect(url, id)){
@@ -93,7 +92,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocke
     // TODO: this needs to also close the socket and re-id some UAVs
     $scope.removeCurrentUAV = function() {
       // CLOSE THE SOCKET
-      
+
       $scope.uavs.splice($scope.current_uav, 1);
     };
 

@@ -11,8 +11,7 @@ WebGCSServices.service('MAVLinkService', function() {
     } catch (e){
       return "";
     }
-    console.log("in mavlink service handler");
-    console.log(msg_json);
+
     var response = {};
 
     if(!msg_json.hasOwnProperty('mavpackettype')){
@@ -155,14 +154,13 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
   UAV.prototype.setUpSocket = function(ws, id){
     var the_uav = this;
     ws.onopen = function () {
-      console.log("ws on open triggered.");
+      console.log("websocket opened.");
     }
     ws.onerror = function() {
       console.log('WEBSOCKET ERROR hit');
       window.alert("Connection to websocket encountered an error.");
     }
     ws.onmessage = function(evt) {
-      console.log('triggered onmessage');
       var msg = evt.data;
       var ws_id = ws.UAVid;   // might not be needed
 
