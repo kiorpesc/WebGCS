@@ -88,7 +88,7 @@ describe('WebGCS App', function() {
 
     });
 
-    it('should not reload the page when user click arm and there is no uav', function(){
+    it('should not reload the page when user click arm button when there is no uav', function(){
       browser.get('app/index.html#asasdas');
       browser.waitForAngular();
       var arm_button = element(by.id("arm_disarm_link"));
@@ -136,6 +136,12 @@ describe('WebGCS App', function() {
       display_box.getText().then(function(text){expect(text).toBe('1')});
 
     });
-
+    it('should not reload the page when user click CenterMap and there is no uav', function(){
+      browser.get('app/index.html#asasdas');
+      browser.waitForAngular();
+      var arm_button = element(by.id("center_map_link"));
+      arm_button.click();
+      browser.getCurrentUrl().then(function(url){expect(url).toBe('http://localhost:8000/app/index.html#/asasdas' )});
+    });
   });
 });
