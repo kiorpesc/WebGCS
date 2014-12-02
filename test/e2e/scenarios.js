@@ -10,8 +10,16 @@ describe('WebGCS App', function() {
         expect(url.split('#')[1]).toBeUndefined();
       });
   });
-
-
+  it('should switch to mission view when mission button was clicked', function(){
+    var mission_tab = element(by.id("mission_view_button"))
+    mission_tab.click();
+    mission_tab.getAttribute('class').then(function(status){expect(status).toBe('active')});
+  });
+  it('should switch to hud view when hud button was clicked', function(){
+    var hud_tab = element(by.id("mission_view_button"))
+    hud_tab.click();
+    hud_tab.getAttribute('class').then(function(status){expect(status).toBe('active')});
+  });
   describe('Flight view', function() {
 
     beforeEach(function() {
@@ -31,13 +39,10 @@ describe('WebGCS App', function() {
       var add_uav = element(by.id("add_uav_link"));
       var url_input = element(by.id("uav_ip"));
       var submit_button = element(by.id('submit_uav'));
-
       add_uav.click();
       url_input.sendKeys("sw-testing");
       submit_button.click();
-
       var uavs = element.all(by.repeater('uav in uavs'));
-
       expect(uavs.count()).toBe(1);
     });
 
