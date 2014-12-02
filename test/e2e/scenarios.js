@@ -68,7 +68,7 @@ describe('WebGCS App', function() {
       var uavs = element.all(by.repeater('uav in uavs'));
 
       expect(uavs.count()).toBe(1);
-      add_uav.click();
+      //add_uav.click();
       url_input.sendKeys("sw-testing");
       submit_button.click();
       uavs = element.all(by.repeater('uav in uavs'));
