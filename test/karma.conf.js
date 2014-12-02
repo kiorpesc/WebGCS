@@ -14,7 +14,17 @@ module.exports = function(config){
       'app/script/**/*.js',
       'test/unit/**/*.js'
     ],
+    reporters: ['progress', 'coverage'],
 
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'app/script/*.js': ['coverage']
+    },coverageReporter: {
+      type : 'html',
+      dir : 'coverage/'
+    },
     autoWatch : true,
 
     frameworks: ['jasmine'],
@@ -24,7 +34,8 @@ module.exports = function(config){
     plugins : [
             'karma-chrome-launcher',
             'karma-firefox-launcher',
-            'karma-jasmine'
+            'karma-jasmine',
+            'karma-coverage'
             ],
 
     junitReporter : {
