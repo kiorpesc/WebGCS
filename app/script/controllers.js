@@ -1,9 +1,10 @@
 'use strict';
 
-var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap','ngWebsocket']);
+var WebGCSControllers = angular.module('WebGCSControllers', ['ngMap']);
 
-WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket', function($scope, UAVFactory,$websocket){
-    $scope.$websocket = $websocket;
+WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocketFactory', function($scope, UAVFactory, MyWebSocketFactory){
+    $scope.$websocket = MyWebSocketFactory;
+
     $scope.uavs = [];
 
     $scope.current_uav_id = -1;
@@ -76,7 +77,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket'
     $scope.addUAVLink = function () {
       var ip_port_string = $scope.current_url;
       if(ip_port_string !== "sw-testing"){
-        ip_port_string = "ws://" + ip_port_string;
+        ip_port_string = "ws://" + ip_port_string + "/websocket";
       }
       console.log(ip_port_string);
       $scope.current_url = "";
@@ -94,7 +95,7 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory','$websocket'
       // on websocket open, link the new socket to a new UAV
       // and switch focus to the new UAV
       ws.onopen = function () {
-          consol.log("ws on open triggered.");
+        console.log("ws on open triggered.");
         uavlist.addUAV(ws);
         // TODO: put UI functions inside of UI Namespace?
         //addUAVTabById(uavlist.getCurrentUAVId());

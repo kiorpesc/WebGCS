@@ -11,7 +11,8 @@ WebGCSServices.service('MAVLinkService', function() {
     } catch (e){
       return "";
     }
-
+    console.log("in mavlink service handler");
+    console.log(msg_json);
     var response = {};
 
     if(!msg_json.hasOwnProperty('mavpackettype')){
@@ -70,10 +71,10 @@ WebGCSServices.service('MAVLinkService', function() {
 });
 
 
-WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(MAVLinkService,$websocket) {
+WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', function(MAVLinkService,$websocket) {
   function UAV(){
-    this.socket = null,
-    this.id = null,
+    this.socket = null;
+    this.id = null;
     this.params = {
       last_heartbeat : 0,
       base_mode : 0,
@@ -91,8 +92,8 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
       airspeed : 0,
       autopilot : 0,
       voltage : 0,
-    },
-    this.flight_modes = []
+    };
+    this.flight_modes = [];
   }
 
   UAV.prototype.connect = function(_url, id) {
@@ -108,7 +109,7 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
       retval = true;
     }
 
-    var ws = $websocket.$new(ws_config);
+    var ws = $websocket(_url);
 
     this.setUpSocket(ws, id);
 
@@ -132,51 +133,153 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', '$websocket', function(M
       this.sendCommand('DISARM');
   };
   UAV.prototype.handleMessage = function(msg) {
+    var _flight_modes = this.flight_modes;
+    var _params = this.params;
     var response = MAVLinkService.handleMAVLink(msg);
+    console.log(_params);
     if (response.hasOwnProperty('flight_modes')) {
-      this.flight_modes = response.flight_modes;
+      _flight_modes = response.flight_modes;
     }
     if (response.hasOwnProperty('params')){
-      for (var param in response.params){
-        this[param] = response[param];
+      for (var key in response.params){
+        if (_params.hasOwnProperty(key)){
+          _params[key] = response.params[key];
+        }
       }
     }
+    console.log(_params);
+    this.flight_modes = _flight_modes;
+    this.params = _params;
   }
 
   UAV.prototype.setUpSocket = function(ws, id){
-    ws.$on('$open', function () {
+    var the_uav = this;
+    ws.onopen = function () {
       console.log("ws on open triggered.");
-      ws.$emit('$message', 'i triggered a message');
+      //ws.$emit('$message');
       // attach an id to the ws
-      ws.UAVid = id;
-    })
-    .$on('$error', function() {
-      var ws_id = ws.UAVid;
-
-      if(confirm("UAV " + ws_id.toString() + " connection error.  Attempt reconnect?")){
-        // reconnect
-      } else {
-        // remove UAV from UI
-        //removeUAVById(ws_id);
-        //ws.close();
-      }
-    })
-    .$on('$message', function(evt) {
+    }
+    ws.onerror = function() {
+      console.log('WEBSOCKET ERROR hit')
+    }
+    ws.onmessage = function(evt) {
       console.log('triggered onmessage');
       var msg = evt.data;
+      //console.log(msg);
       var ws_id = ws.UAVid;   // might not be needed
 
-      var response = this.handleMessage(msg);
+      the_uav.handleMessage(msg);
       //TODO: parse response into appropriate locations
-    })
-    .$on('$close', function() {
+    }
+    ws.onclose = function() {
       var ws_id = ws.UAVid;
-      alert("Connection with UAV " + ws_id.toString() + "closed.");
+      //alert("Connection with UAV " + ws_id.toString() + "closed.");
 
-    });
+    };
   }
 
   return function() {
     return new UAV();
   };
 }]);
+
+/**
+ * Custom WebSocket factory to allow unit testing
+ *   and generation of message events without a
+ *   server.
+ **/
+WebGCSServices.factory('MyWebSocketFactory', function(){
+  var MyWebSocket = function(_url){
+    this.url = _url;
+    this.heartbeat = {
+        mavpackettype : 'HEARTBEAT',
+        autopilot : 12,
+        system_state : 3,    // 3 is standby, 4 is active
+        base_mode : 0,
+        custom_mode : 0,
+    };
+    this.flight_modes = ['MANUAL',
+                         'SEATBELT',
+                         'EASY',
+                         'AUTO-READY',
+                         'AUTO-TAKEOFF',
+                         'AUTO-LOITER',
+                         'AUTO-MISSION',
+                         'AUTO-RTL',
+                         'AUTO-LAND'];
+    this.vfr_hud = {
+        mavpackettype: 'VFR_HUD',
+        alt:    100.0,      // 100 m
+        heading: 5.00,      // 5 degrees
+    };
+    this.sys_status = {
+        voltage: 12000,     // 12V
+    };
+    this.statustext = {
+        text: "Status message.",
+    };
+  }
+
+  MyWebSocket.prototype.onopen = function () {
+
+  }
+
+  MyWebSocket.prototype.onmessage = function (msg) {
+
+  }
+
+  MyWebSocket.prototype.onerror = function () {
+
+  }
+
+  MyWebSocket.prototype.onclose = function () {
+
+  }
+
+  MyWebSocket.prototype.dispatchEvent = function (e) {
+      this.onmessage(e);
+  }
+
+  MyWebSocket.prototype.send = function (msg) {
+      console.log(msg);
+  }
+
+  MyWebSocket.prototype.close = function() {
+      self.onclose();
+  }
+
+  MyWebSocket.prototype.wrapEvent = function (contents) {
+      var data_str = JSON.stringify(contents);
+      return new MessageEvent("message", {
+          data: data_str,
+      });
+  }
+
+  MyWebSocket.prototype.sendFlightModes = function () {
+      var msg_evt = this.wrapEvent(this.flight_modes);
+      this.dispatchEvent(msg_evt);
+  }
+
+  MyWebSocket.prototype.generateVFR_HUD = function () {
+
+  }
+
+  MyWebSocket.prototype.generateHeartbeat = function () {
+      console.log("Generating lub dub");
+      var msg_evt = this.wrapEvent(this.heartbeat);
+      this.dispatchEvent(msg_evt);
+  }
+
+  MyWebSocket.prototype.beginTransmitting = function () {
+      this.sendFlightModes();
+
+  }
+
+  return function(url) {
+      if (url === "sw-testing"){
+        return new MyWebSocket(url);
+      } else {
+        return new WebSocket(url);
+      }
+  }
+})

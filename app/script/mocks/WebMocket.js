@@ -3,7 +3,7 @@
 * User: kiorpesc
 * Date: 2014-11-17
 * Time: 03:09 PM
-* 
+*
 * A fake websocket to be used for testing front-end functionality
 *   without the need for a functioning backend
 */
@@ -37,24 +37,24 @@ function WebMocket (addr) {
     this.statustext = {
         text: "Status message.",
     };
-    
-    setTimeout(this.generateHeartbeat, 1000);
+
+    //setTimeout(this.generateHeartbeat, 1000);
 }
 
 WebMocket.prototype.onopen = function () {
-    
+
 }
 
 WebMocket.prototype.onmessage = function (msg) {
-    
+
 }
 
 WebMocket.prototype.onerror = function () {
-    
+
 }
 
 WebMocket.prototype.onclose = function () {
-    
+
 }
 
 WebMocket.prototype.dispatchEvent = function (e) {
@@ -82,7 +82,7 @@ WebMocket.prototype.sendFlightModes = function () {
 }
 
 WebMocket.prototype.generateVFR_HUD = function () {
-    
+
 }
 
 WebMocket.prototype.generateHeartbeat = function () {
@@ -91,12 +91,12 @@ WebMocket.prototype.generateHeartbeat = function () {
     //var msg_evt = new MessageEvent("message", {
     //    data : data_str,
     //});
-    
+
     var msg_evt = this.wrapEvent(this.heartbeat);
     this.dispatchEvent(msg_evt);
 }
 
 WebMocket.prototype.beginTransmitting = function () {
     this.sendFlightModes();
-    setInterval(this.generateHeartbeat, 1000);
+    //setInterval(this.generateHeartbeat, 1000);
 }

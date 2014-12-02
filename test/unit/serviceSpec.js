@@ -103,11 +103,11 @@ describe('WebGCSServices', function() {
   describe('UAVFactory', function() {
     var mav_service, uav_factory, websocket, new_uav, ws_instance;
     beforeEach(function() {
-      module('ngWebsocket');
-      inject(function(_MAVLinkService_, _UAVFactory_, $websocket) {
+      //module('ngWebsocket');
+      inject(function(_MAVLinkService_, _UAVFactory_, _MyWebSocketFactory_) {
       mav_service = _MAVLinkService_;
       uav_factory = _UAVFactory_;
-      websocket =  $websocket;
+      websocket = _MyWebSocketFactory_;
       new_uav = uav_factory();
     })});
 
@@ -130,50 +130,37 @@ describe('WebGCSServices', function() {
     });
 
     describe('WITH Websocket', function() {
-        var socketready = false;
+        var heartbeat = {
+          mavpackettype : 'HEARTBEAT',
+          base_mode : 0,
+          custom_mode : 0,
+          system_state : 3,
+          autopilot : 12,
+        };
       beforeEach(function(){
           inject(function(){
-        new_uav.id = 0;
-        ws_instance = websocket.$new({ url:'sw-testing', mock: true });
-        new_uav.socket = ws_instance;
-        new_uav.setUpSocket(ws_instance, new_uav.id);
-        waitsFor(function(){
-                  return new_uav.socket.$status()== new_uav.socket.$OPEN;
+              new_uav.id = 0;
+              new_uav.socket = websocket("sw-testing");
+              new_uav.setUpSocket(new_uav.socket, new_uav.id);
           })
-        })
-
       });
 
-    it('should add a websocket when connect() is called with "sw-testing"', function(done) {
-      var new_uav = uav_factory();
-      new_uav.connect("sw-testing");
+    it('should add a websocket when connect() is called with "sw-testing"', function() {
+      //var new_uav = uav_factory();
+      //new_uav.connect("sw-testing");
       expect(new_uav.socket).toBeDefined();
     });
 
 
-    xit('should add the event handling functions to the websocket', function(done) {
+    xit('should add the event handling functions to the websocket', function() {
       //var new_uav = uav_factory();
       new_uav.connect("sw-testing", 0);
 
     });
 
-    it('should send mavlink messages to the MAVLinkService', function(done) {
-      var heartbeat = {
-        mavpackettype : 'HEARTBEAT',
-        base_mode : 0,
-        custom_mode : 0,
-        system_state : 3,
-        autopilot : 12,
-      };
-      // construct UAV
-      // add a websocket
-      // have the websocket emit a heartbeat message
-      //var new_uav = uav_factory();
-      new_uav.connect("sw-testing", 0);
-      expect(new_uav.socket.$status()).toEqual(new_uav.socket.$OPEN);
-      expect(new_uav.socket.$ready()).toBeTruthy();
-      //new_uav.socket.$emit('message', JSON.stringify(heartbeat));
-      //expect(new_uav.params.autopilot).toBe(12);
+    it('should send mavlink messages to the MAVLinkService', function() {
+      new_uav.socket.generateHeartbeat();
+      expect(new_uav.params.autopilot).toBe(12);
     });
     });
   });
