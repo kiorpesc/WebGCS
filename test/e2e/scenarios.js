@@ -95,8 +95,30 @@ describe('WebGCS App', function() {
       var arm_button = element(by.id("arm_disarm_link"));
       arm_button.click();
       browser.getCurrentUrl().then(function(url){expect(url).toBe('http://localhost:8000/app/index.html#/asasdas' )});
-    })
+    });
 
+    it('should update UAV display properly based on user\'s selection', function(){
+      var add_uav = element(by.id("add_uav_link"));
+      var url_input = element(by.id("uav_ip"));
+      var submit_button = element(by.id('submit_uav'));
+
+      add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+
+      var uavs = element.all(by.repeater('uav in uavs'));
+
+      expect(uavs.count()).toBe(1);
+      //add_uav.click();
+      url_input.sendKeys("sw-testing");
+      submit_button.click();
+      uavs = element(by.id('uav0'));
+      uavs.click();
+      //console.log(uavs[1]);
+      var display_box = element(by.id("uavid_box"));
+      display_box.getText().then(function(text){expect(text).toBe('0')});
+
+    });
 
   });
 });
