@@ -40,8 +40,8 @@ describe('WebGCS App', function() {
       expect(uavs.count()).toBe(1);
     });
 
-
-    it('should alert the user if the WebSocket conection fails', function() {
+    // left out due to open issue with protractor handling alerts
+    xit('should alert the user if the WebSocket conection fails', function() {
       var add_uav = element(by.id("add_uav_link"));
       var url_input = element(by.id("uav_ip"));
       var submit_button = element(by.id('submit_uav'));
