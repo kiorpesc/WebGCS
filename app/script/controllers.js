@@ -89,6 +89,14 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocke
       }
 
     };
+
+    // TODO: this needs to also close the socket and re-id some UAVs
+    $scope.removeCurrentUAV = function() {
+      // CLOSE THE SOCKET
+      
+      $scope.uavs.splice($scope.current_uav, 1);
+    };
+
 }]);
 
 WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){

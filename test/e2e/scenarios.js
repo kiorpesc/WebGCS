@@ -57,7 +57,7 @@ describe('WebGCS App', function() {
     });
 
     it('should allow the user to remove the current UAV', function() {
-      
+
     })
 
   });
