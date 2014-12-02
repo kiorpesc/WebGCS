@@ -41,7 +41,7 @@ describe('WebGCS App', function() {
     });
 
 
-    xit('should alert the user if the WebSocket conection fails', function() {
+    it('should alert the user if the WebSocket conection fails', function() {
       var add_uav = element(by.id("add_uav_link"));
       var url_input = element(by.id("uav_ip"));
       var submit_button = element(by.id('submit_uav'));
@@ -51,6 +51,13 @@ describe('WebGCS App', function() {
       url_input.sendKeys("bogus");
 
       submit_button.click();
+
+      browser.wait(function() {
+        return browser.switchTo().alert().then(
+          function() { return true; },
+          function() { return false; }
+        );
+      });
 
       browser.switchTo().alert().dismiss();
       // if the alert is not there, it should throw an error
@@ -79,7 +86,7 @@ describe('WebGCS App', function() {
       uavs = element.all(by.repeater('uav in uavs'));
       expect(uavs.count()).toBe(1);
 
-    })
+    });
 
   });
 });
