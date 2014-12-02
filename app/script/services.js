@@ -17,7 +17,6 @@ WebGCSServices.service('MAVLinkService', function() {
 
     if(!msg_json.hasOwnProperty('mavpackettype')){
       if(msg_json[0] == 'STATUSTEXT'){
-        // display on screen
       } else {
         response.flight_modes = msg_json;
       }
@@ -117,7 +116,6 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
     this.id = id;
 
     return retval;
-
   };
 
   UAV.prototype.isArmed = function() {
@@ -156,8 +154,6 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
     var the_uav = this;
     ws.onopen = function () {
       console.log("ws on open triggered.");
-      //ws.$emit('$message');
-      // attach an id to the ws
     }
     ws.onerror = function() {
       console.log('WEBSOCKET ERROR hit')
@@ -165,16 +161,12 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
     ws.onmessage = function(evt) {
       console.log('triggered onmessage');
       var msg = evt.data;
-      //console.log(msg);
       var ws_id = ws.UAVid;   // might not be needed
 
       the_uav.handleMessage(msg);
-      //TODO: parse response into appropriate locations
     }
     ws.onclose = function() {
       var ws_id = ws.UAVid;
-      //alert("Connection with UAV " + ws_id.toString() + "closed.");
-
     };
   }
 

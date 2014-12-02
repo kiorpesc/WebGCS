@@ -122,7 +122,6 @@ describe('WebGCSServices', function() {
       expect(new_uav.params).toBeDefined();
     });
 
-
     it('should fail to add a websocket when connect() is called with an invalid IP', function() {
       var new_uav = uav_factory();
       expect(function() {new_uav.connect("not an ip address")}).toThrow();
@@ -145,23 +144,18 @@ describe('WebGCSServices', function() {
           })
       });
 
-    it('should add a websocket when connect() is called with "sw-testing"', function() {
-      //var new_uav = uav_factory();
-      //new_uav.connect("sw-testing");
-      expect(new_uav.socket).toBeDefined();
-    });
+      it('should add a websocket when connect() is called with "sw-testing"', function() {
+        expect(new_uav.socket).toBeDefined();
+      });
 
+      xit('should add the event handling functions to the websocket', function() {
+        new_uav.connect("sw-testing", 0);
+      });
 
-    xit('should add the event handling functions to the websocket', function() {
-      //var new_uav = uav_factory();
-      new_uav.connect("sw-testing", 0);
-
-    });
-
-    it('should send mavlink messages to the MAVLinkService', function() {
-      new_uav.socket.generateHeartbeat();
-      expect(new_uav.params.autopilot).toBe(12);
-    });
+      it('should send mavlink messages to the MAVLinkService', function() {
+        new_uav.socket.generateHeartbeat();
+        expect(new_uav.params.autopilot).toBe(12);
+      });
     });
   });
 })

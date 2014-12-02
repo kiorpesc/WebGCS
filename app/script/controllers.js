@@ -71,9 +71,8 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocke
         $scope.setCurrentUAV(id);
       }
     };
-////////////////////////////// SEPARATE THESE CONCERNS ////////////////////
-    // this should be handled in UAV, not the list.
-    // the list should be concerned with aggregating UAVs only
+
+
     $scope.addUAVLink = function () {
       var ip_port_string = $scope.current_url;
       if(ip_port_string !== "sw-testing"){
@@ -90,54 +89,6 @@ WebGCSControllers.controller('UAVListCtrl', ['$scope', 'UAVFactory', 'MyWebSocke
       }
 
     };
-
-    $scope.setUpWebSocket = function (ws, uavlist) {
-      // on websocket open, link the new socket to a new UAV
-      // and switch focus to the new UAV
-      ws.onopen = function () {
-        console.log("ws on open triggered.");
-        uavlist.addUAV(ws);
-        // TODO: put UI functions inside of UI Namespace?
-        //addUAVTabById(uavlist.getCurrentUAVId());
-
-        // attach an id to the ws
-        ws.UAVid = uavlist.getCurrentUAVId();
-
-        console.log("Added new UAV; id = ");
-        console.log(ws.UAVid);
-
-      }
-
-      // process received messages
-      ws.onmessage = function(evt) {
-        var msg = evt.data;
-        var ws_id = ws.UAVid;   // might not be needed
-
-        // TODO: Mavlink handling module
-        handler.handleMavlink(msg, ws_id);
-      }
-
-      // handle socket errors
-      ws.onerror = function () {
-        var ws_id = ws.UAVid;
-
-        if(confirm("UAV " + ws_id.toString() + " connection error.  Attempt reconnect?")){
-          // reconnect
-        } else {
-          // remove UAV from UI
-          removeUAVById(ws_id);
-          ws.close();
-        }
-      }
-
-      // websocket close
-      ws.onclose = function () {
-        var ws_id = ws.UAVid;
-        alert("Connection with UAV " + ws_id.toString() + "closed.");
-      }
-  };
-///////////////////////////////////////////////////////////////////////////////////////////
-
 }]);
 
 WebGCSControllers.controller('NavBarCtrl', [ '$scope', function($scope){
