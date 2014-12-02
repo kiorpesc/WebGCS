@@ -1,6 +1,6 @@
 'use strict';
 
-var WebGCSServices = angular.module('WebGCSServices', ['ngResource','ngWebsocket']);
+var WebGCSServices = angular.module('WebGCSServices', ['ngResource']);
 
 WebGCSServices.service('MAVLinkService', function() {
   this.message_count = 0;
@@ -16,7 +16,7 @@ WebGCSServices.service('MAVLinkService', function() {
     var response = {};
 
     if(!msg_json.hasOwnProperty('mavpackettype')){
-      if(msg_json[0] == 'STATUSTEXT'){
+      if(msg_json[0] === 'STATUSTEXT'){
       } else {
         response.flight_modes = msg_json;
       }
@@ -135,18 +135,19 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
     var _flight_modes = this.flight_modes;
     var _params = this.params;
     var response = MAVLinkService.handleMAVLink(msg);
-    console.log(_params);
+
     if (response.hasOwnProperty('flight_modes')) {
+      console.log("setting flight modes");
       _flight_modes = response.flight_modes;
     }
     if (response.hasOwnProperty('params')){
+      console.log("setting params");
       for (var key in response.params){
         if (_params.hasOwnProperty(key)){
           _params[key] = response.params[key];
         }
       }
     }
-    console.log(_params);
     this.flight_modes = _flight_modes;
     this.params = _params;
   }
@@ -170,6 +171,10 @@ WebGCSServices.factory('UAVFactory', ['MAVLinkService', 'MyWebSocketFactory', fu
     ws.onclose = function() {
       var ws_id = ws.UAVid;
     };
+
+    if(ws.url === 'sw-testing'){
+      ws.sendFlightModes();
+    }
   }
 
   return function() {

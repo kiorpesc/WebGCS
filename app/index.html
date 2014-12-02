@@ -61,7 +61,7 @@
                 Flight Mode
               </a>
               <div class="collapse" id="flight_modes">
-                <a ng-repeat="mode in uav.modes" href="#" class="list-group-item" ng-click="">{{mode}}</a>
+                <a ng-repeat="mode in getCurrentUAV().flight_modes" class="list-group-item" ng-click="getCurrentUAV().sendCommand(mode)">{{mode}}</a>
                 <!--
                 Flight modes will be loaded here by AngularJS when a UAV connects.
                 -->
