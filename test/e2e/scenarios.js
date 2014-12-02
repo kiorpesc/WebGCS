@@ -76,7 +76,6 @@ describe('WebGCS App', function() {
       var uavs = element.all(by.repeater('uav in uavs'));
 
       expect(uavs.count()).toBe(1);
-      //add_uav.click();
       url_input.sendKeys("sw-testing");
       submit_button.click();
       uavs = element.all(by.repeater('uav in uavs'));
@@ -88,7 +87,7 @@ describe('WebGCS App', function() {
       expect(uavs.count()).toBe(1);
 
     });
-    
+
     it('should not reload the page when user click arm and there is no uav', function(){
       browser.get('app/index.html#asasdas');
       browser.waitForAngular();
@@ -109,12 +108,10 @@ describe('WebGCS App', function() {
       var uavs = element.all(by.repeater('uav in uavs'));
 
       expect(uavs.count()).toBe(1);
-      //add_uav.click();
       url_input.sendKeys("sw-testing");
       submit_button.click();
       uavs = element(by.id('uav0'));
       uavs.click();
-      //console.log(uavs[1]);
       var display_box = element(by.id("uavid_box"));
       display_box.getText().then(function(text){expect(text).toBe('0')});
 
